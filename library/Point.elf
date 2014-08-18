@@ -1,0 +1,41 @@
+version: 0
+
+Point<T>{
+  X: get T{
+    value = .x
+  }
+
+  Y: get T{
+    value = .y
+  }
+
+  X: set T{
+    .x = value
+  }
+
+  Y: set T{
+    .y = value
+  }
+
+  set(x: T, y: T){
+    .x = x
+    .y = y
+  }
+
+  OffsetX: set T{
+    .x += value
+  }
+
+  OffsetY: set T{
+    .y += value
+  }
+
+  Offset: set(x: T, y: T){
+    .x += x
+    .y += y
+  }
+private:
+  x: T
+  y: T
+}
+

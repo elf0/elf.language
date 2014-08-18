@@ -1,0 +1,27 @@
+version: 0
+
+Point3<T>: Point<T>{
+  Z: get T{
+    value = .z
+  }
+
+  Z: set T{
+    .z = value
+  }
+  
+  set(x: T, y: T, z: T){
+    Point<T>(x, y)
+    .z = value
+  }
+  
+  OffsetZ: set T{
+    .z += value
+  }
+  
+  Offset: set(x: T, y: T, z: T){
+    Point<T>.Offset(x, y)
+    .z += z
+  }
+private:
+  z: T
+}
