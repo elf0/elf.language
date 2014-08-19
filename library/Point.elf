@@ -3,18 +3,7 @@ version: 0
 //Author: elf
 //EMail: elf198012@gmail.com
 
-#Point<T>{
-  X: get T
-  Y: get T
-  X: set T
-  Y: set T
-  set(x: T, y: T)
-  OffsetX: set T
-  OffsetY: set T
-  Offset: set(x: T, y: T)
-}
-
-Point<T>: #Point<T>{
+Point<T>{
   X: get T{
     return .x
   }
@@ -48,7 +37,7 @@ Point<T>: #Point<T>{
     .x += x
     .y += y
   }
-
+private:
   x: T
   y: T
 }

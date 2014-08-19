@@ -3,82 +3,82 @@ version: 0
 //Author: elf
 //EMail: elf198012@gmail.com
 
-#DoubleNode{
- Next: get DoubleNode
- Prev: get DoubleNode
- LinkNext: function(node: DoubleNode)
- LinkPrev: function(node: DoubleNode)
- Link: function(prev: DoubleNode, next: DoubleNode)
+IDoubleNode{
+ Next: get IDoubleNode
+ Prev: get IDoubleNode
+ LinkNext: function(node: IDoubleNode)
+ LinkPrev: function(node: IDoubleNode)
+ Link: function(prev: IDoubleNode, next: IDoubleNode)
  Unlink: function
  Reset: function
  Alone: is
  Alone: is not
- MoveBuddiesTo: function(target: DoubleNode)
- MoveBuddiesToFront: function(target: DoubleNode)
- SwapBuddies: function(target: DoubleNode)
+ MoveBuddiesTo: function(target: IDoubleNode)
+ MoveBuddiesToFront: function(target: IDoubleNode)
+ SwapBuddies: function(target: IDoubleNode)
 }
 
-DoubleNode: #DoubleNode{
- Next: get DoubleNode{
+DoubleNode: IDoubleNode{
+ Next = get IDoubleNode{
    return .next;
  }
  
- Prev: get DoubleNode{
+ Prev = get IDoubleNode{
    return .prev;
  }
 
- LinkNext: function(node: DoubleNode){
+ LinkNext = function(node: IDoubleNode){
   .next = node
   node.prev = this
  }
  
- LinkPrev: function(node: DoubleNode){
+ LinkPrev = function(node: IDoubleNode){
   .prev = node
   node.next = this
  }
 
- Link: function(prev: DoubleNode, next: DoubleNode){
+ Link = function(prev: IDoubleNode, next: IDoubleNode){
   .LinkPrev(prev)
   .LinkNext(next)
  }
 
- Unlink: function{
+ Unlink = function{
   .prev.next = .next
   .next.prev = .prev
  }
 
- Reset: function{
+ Reset = function{
   .prev = .next = this
  }
 
- Alone: is{
+ Alone = is{
   return .next == this
  }
 
- Alone: is not{
+ Alone = is not{
   return .next != this
  }
 
- MoveBuddiesTo: function(target: DoubleNode){
+ MoveBuddiesTo = function(target: IDoubleNode){
   .next.LinkPrev(target.prev)
   .prev.LinkNext(target)
   .Reset(this)
  }
 
- MoveBuddiesToFront: function(target: DoubleNode){
+ MoveBuddiesToFront = function(target: IDoubleNode){
   .next.LinkPrev(target)
   .prev.LinkNext(target.next)
   .Reset(this)
  }
 
- SwapBuddies: function(target: DoubleNode){
+ SwapBuddies = function(target: IDoubleNode){
   tmp: DoubleNode
   tmp.Reset()
   .MoveBuddiesTo(tmp)
   target.MoveBuddiesTo(this)
   tmp.MoveBuddiesTo(target)
  }
-
- next: DoubleNode
- prev: DoubleNode 
+private:
+ next: IDoubleNode
+ prev: IDoubleNode 
 }
