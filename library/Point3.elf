@@ -7,7 +7,7 @@ import{
  Point
 }
 
-#Point3<T>: #Point{
+#Point3<T>: #Point<T>{
   Z: get T
   Z: set T
   set(x: T, y: T, z: T)
