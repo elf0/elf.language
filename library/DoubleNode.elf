@@ -1,0 +1,69 @@
+version: 0
+//License: Public Domain
+//Author: elf
+//EMail: elf198012@gmail.com
+
+DoubleNode{
+ Next: get DoubleNode{
+   return .next;
+ }
+
+ Next: set DoubleNode{
+    .next = value
+    value.prev = this
+ }
+ 
+ Prev: get DoubleNode{
+   return .prev;
+ }
+ 
+ Prev: set DoubleNode{
+    .prev = value
+    value.next = this
+ }
+
+ Link: function(prev: DoubleNode, next: DoubleNode){
+    .Prev(prev)
+    .Next(next)
+ }
+
+ Unlink: function{
+    .prev.next = .next
+    .next.prev = .prev
+ }
+
+ Reset: function{
+    .prev = .next = this
+ }
+
+ Alone: is{
+    return .next == this
+ }
+
+ Alone: is not{
+    return .next != this
+ }
+
+ MoveBuddiesTo: function(target: DoubleNode){
+    .next.Prev(target.prev)
+    .prev.Next(target)
+    .Reset(this)
+ }
+
+ MoveBuddiesToFront: function(target: DoubleNode){
+    .next.Prev(target)
+    .prev.Next(target.next)
+    .Reset(this)
+ }
+
+ SwapBuddies: function(target: DoubleNode){
+    DoubleNode tmp
+    tmp.Reset()
+    .MoveBuddiesTo(tmp)
+    target.MoveBuddiesTo(this)
+    tmp.MoveBuddiesTo(target)
+ }
+private:
+ next: DoubleNode
+ prev: DoubleNode 
+}

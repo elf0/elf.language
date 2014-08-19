@@ -1,12 +1,15 @@
 version: 0
+//License: Public Domain
+//Author: elf
+//EMail: elf198012@gmail.com
 
 Point<T>{
   X: get T{
-    value = .x
+    return .x
   }
 
   Y: get T{
-    value = .y
+    return .y
   }
 
   X: set T{

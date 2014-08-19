@@ -1,8 +1,11 @@
 version: 0
+//License: Public Domain
+//Author: elf
+//EMail: elf198012@gmail.com
 
 Point3<T>: Point<T>{
   Z: get T{
-    value = .z
+    return .z
   }
 
   Z: set T{
