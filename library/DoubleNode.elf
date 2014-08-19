@@ -7,61 +7,61 @@ DoubleNode{
  Next: get DoubleNode{
    return .next;
  }
-
- Next: set DoubleNode{
-    .next = value
-    value.prev = this
- }
  
  Prev: get DoubleNode{
    return .prev;
  }
+
+ LinkNext: function(node: DoubleNode){
+  .next = node
+  node.prev = this
+ }
  
- Prev: set DoubleNode{
-    .prev = value
-    value.next = this
+ LinkPrev: function(node: DoubleNode){
+  .prev = node
+  node.next = this
  }
 
  Link: function(prev: DoubleNode, next: DoubleNode){
-    .Prev(prev)
-    .Next(next)
+  .LinkPrev(prev)
+  .LinkNext(next)
  }
 
  Unlink: function{
-    .prev.next = .next
-    .next.prev = .prev
+  .prev.next = .next
+  .next.prev = .prev
  }
 
  Reset: function{
-    .prev = .next = this
+  .prev = .next = this
  }
 
  Alone: is{
-    return .next == this
+  return .next == this
  }
 
  Alone: is not{
-    return .next != this
+  return .next != this
  }
 
  MoveBuddiesTo: function(target: DoubleNode){
-    .next.Prev(target.prev)
-    .prev.Next(target)
-    .Reset(this)
+  .next.LinkPrev(target.prev)
+  .prev.LinkNext(target)
+  .Reset(this)
  }
 
  MoveBuddiesToFront: function(target: DoubleNode){
-    .next.Prev(target)
-    .prev.Next(target.next)
-    .Reset(this)
+  .next.LinkPrev(target)
+  .prev.LinkNext(target.next)
+  .Reset(this)
  }
 
  SwapBuddies: function(target: DoubleNode){
-    tmp: DoubleNode
-    tmp.Reset()
-    .MoveBuddiesTo(tmp)
-    target.MoveBuddiesTo(this)
-    tmp.MoveBuddiesTo(target)
+  tmp: DoubleNode
+  tmp.Reset()
+  .MoveBuddiesTo(tmp)
+  target.MoveBuddiesTo(this)
+  tmp.MoveBuddiesTo(target)
  }
 private:
  next: DoubleNode
