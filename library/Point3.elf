@@ -15,7 +15,7 @@ import{
   Offset: set(x: T, y: T, z: T)
 }
 
-Point3<T>: Point<T>{
+Point3<T>: #Point3<T> + Point<T>{
   Z: get T{
     return .z
   }
