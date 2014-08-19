@@ -57,7 +57,7 @@ DoubleNode{
  }
 
  SwapBuddies: function(target: DoubleNode){
-    DoubleNode tmp
+    tmp: DoubleNode
     tmp.Reset()
     .MoveBuddiesTo(tmp)
     target.MoveBuddiesTo(this)
