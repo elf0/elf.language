@@ -3,7 +3,22 @@ version: 0
 //Author: elf
 //EMail: elf198012@gmail.com
 
-DoubleNode{
+#DoubleNode{
+ Next: get DoubleNode
+ Prev: get DoubleNode
+ LinkNext: function(node: DoubleNode)
+ LinkPrev: function(node: DoubleNode)
+ Link: function(prev: DoubleNode, next: DoubleNode)
+ Unlink: function
+ Reset: function
+ Alone: is
+ Alone: is not
+ MoveBuddiesTo: function(target: DoubleNode)
+ MoveBuddiesToFront: function(target: DoubleNode)
+ SwapBuddies: function(target: DoubleNode)
+}
+
+DoubleNode: #DoubleNode{
  Next: get DoubleNode{
    return .next;
  }
@@ -63,7 +78,7 @@ DoubleNode{
   target.MoveBuddiesTo(this)
   tmp.MoveBuddiesTo(target)
  }
-private:
+
  next: DoubleNode
  prev: DoubleNode 
 }

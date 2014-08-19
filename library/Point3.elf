@@ -3,6 +3,18 @@ version: 0
 //Author: elf
 //EMail: elf198012@gmail.com
 
+import{
+ Point
+}
+
+#Point3<T>: #Point{
+  Z: get T
+  Z: set T
+  set(x: T, y: T, z: T)
+  OffsetZ: set T
+  Offset: set(x: T, y: T, z: T)
+}
+
 Point3<T>: Point<T>{
   Z: get T{
     return .z
@@ -25,6 +37,6 @@ Point3<T>: Point<T>{
     Point<T>.Offset(x, y)
     .z += z
   }
-private:
+
   z: T
 }
