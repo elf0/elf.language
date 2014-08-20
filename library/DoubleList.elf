@@ -1,0 +1,89 @@
+version: 0
+//License: Public Domain
+//Author: elf
+//EMail: elf198012@gmail.com
+
+root: elf
+
+import{
+ elf.List
+ elf.DoubleNode
+}
+
+DoubleList: List{
+.Reset = function{
+  .entry.Reset()
+}
+
+.Initialize = function{
+  .Reset()
+}
+
+.Empty = is{
+  return .entry is Alone
+}
+
+.Empty = is not{
+  return .entry is not Alone
+}
+
+.Front = get DoubleNode{
+ return entry.Next
+}
+
+.Back = get DoubleNode{
+ return entry.Prev
+}
+
+.Insert = function(node: DoubleNode, where: DoubleNode){
+  node.Link(where.Prev, where)
+}
+
+.InsertAfter = function(node: DoubleNode, where: DoubleNode){
+  node.Link(where, where.Next)
+}
+
+.Remove = function(node: DoubleNode){
+  node.Unlink()
+}
+
+//push back
+.Push = function(node: DoubleNode){
+  node.Link(entry.Prev, entry)
+}
+
+//pop front
+.Pop = function->(node: DoubleNode){
+  node = entry.Next
+  node.Unlink()
+}
+
+.PushFront = function(node: DoubleNode){
+  node.Link(entry, entry.Next)
+}
+
+.PopBack = function->(node: DoubleNode){
+  node = entry.Prev
+  node.Unlink()
+}
+
+.MoveNodeToFront = function(node: DoubleNode){
+  .Remove(node: DoubleNode)
+  .PushFront(node: DoubleNode)
+}
+
+//move to back
+.MoveTo = function(target: DoubleList){
+  .entry.MoveBuddiesTo(target.entry)
+}
+
+.MoveToFront = function(target: DoubleList){
+  .entry.MoveBuddiesToFront(target.entry)
+}
+
+.Swap = function(target: DoubleList){
+  .entry.SwapBuddies(target.entry)
+}
+private:
+ entry: DoubleNode
+}
