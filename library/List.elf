@@ -12,15 +12,15 @@ Empty: is
 Empty: is not
 Front: get DoubleNode
 Back: get DoubleNode
-Insert: function(node: DoubleNode, where: DoubleNode)
-InsertAfter: function(node: DoubleNode, where: DoubleNode)
-Remove: function(node: DoubleNode)
-Push: function(node: DoubleNode)
+Insert: function(node: = DoubleNode, where: = DoubleNode)
+InsertAfter: function(node: = DoubleNode, where: = DoubleNode)
+Remove: function(node: = DoubleNode)
+Push: function(node: = DoubleNode)
 Pop: function->(node: DoubleNode)
-PushFront: function(node: DoubleNode)
+PushFront: function(node: = DoubleNode)
 PopBack: function->(node: DoubleNode)
-MoveNodeToFront: function(node: DoubleNode)
-MoveTo: function(target: List)
-MoveToFront: function(target: List)
-Swap: function(target: List)
+MoveNodeToFront: function(node: = DoubleNode)
+MoveTo: function(target: = List)
+MoveToFront: function(target: = List)
+Swap: function(target: = List)
 }

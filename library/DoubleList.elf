@@ -35,20 +35,20 @@ DoubleList: List{
  return entry.Prev
 }
 
-.Insert = function(node: DoubleNode, where: DoubleNode){
+.Insert = function(node: = DoubleNode, where: = DoubleNode){
   node.Link(where.Prev, where)
 }
 
-.InsertAfter = function(node: DoubleNode, where: DoubleNode){
+.InsertAfter = function(node: = DoubleNode, where: = DoubleNode){
   node.Link(where, where.Next)
 }
 
-.Remove = function(node: DoubleNode){
+.Remove = function(node: = DoubleNode){
   node.Unlink()
 }
 
 //push back
-.Push = function(node: DoubleNode){
+.Push = function(node: = DoubleNode){
   node.Link(entry.Prev, entry)
 }
 
@@ -58,7 +58,7 @@ DoubleList: List{
   node.Unlink()
 }
 
-.PushFront = function(node: DoubleNode){
+.PushFront = function(node: = DoubleNode){
   node.Link(entry, entry.Next)
 }
 
@@ -67,21 +67,21 @@ DoubleList: List{
   node.Unlink()
 }
 
-.MoveNodeToFront = function(node: DoubleNode){
+.MoveNodeToFront = function(node: = DoubleNode){
   .Remove(node: DoubleNode)
   .PushFront(node: DoubleNode)
 }
 
 //move to back
-.MoveTo = function(target: DoubleList){
+.MoveTo = function(target: = DoubleList){
   .entry.MoveBuddiesTo(target.entry)
 }
 
-.MoveToFront = function(target: DoubleList){
+.MoveToFront = function(target: = DoubleList){
   .entry.MoveBuddiesToFront(target.entry)
 }
 
-.Swap = function(target: DoubleList){
+.Swap = function(target: = DoubleList){
   .entry.SwapBuddies(target.entry)
 }
 private:
