@@ -3,6 +3,8 @@ version: 0
 //Author: elf
 //EMail: elf198012@gmail.com
 
+root: elf
+
 DoubleNode{
  Next: get DoubleNode{
    return .next;

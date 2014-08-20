@@ -3,6 +3,8 @@ version: 0
 //Author: elf
 //EMail: elf198012@gmail.com
 
+root: elf
+
 Point<T>{
   X: get T{
     return .x
