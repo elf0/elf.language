@@ -85,5 +85,5 @@ DoubleList: List{
   .entry.SwapBuddies(target.entry)
 }
 private:
- entry: DoubleNode
+  entry: DoubleNode
 }
