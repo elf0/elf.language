@@ -5,7 +5,12 @@ version: 0
 
 root: elf
 
-Point<T>{
+Point: class<T>{
+  set(x: T, y: T){
+    .x = x
+    .y = y
+  }
+
   X: get T{
     return .x
   }
@@ -22,11 +27,6 @@ Point<T>{
     .y = value
   }
 
-  set(x: T, y: T){
-    .x = x
-    .y = y
-  }
-
   OffsetX: set T{
     .x += value
   }
@@ -39,6 +39,7 @@ Point<T>{
     .x += x
     .y += y
   }
+
 private:
   x: T
   y: T

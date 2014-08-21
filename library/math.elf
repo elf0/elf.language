@@ -1,3 +1,5 @@
-math{
- pi: 3.1415926
-}
+version: 0
+
+root: math
+
+pi: 3.1415926

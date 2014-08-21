@@ -3,28 +3,28 @@ version: 0
 //Author: elf
 //EMail: elf198012@gmail.com
 
-root: elf
+root: elf.DoubleNode
 
-DoubleNode{
- Next: get DoubleNode{
+class{
+ Next: get This{
    return .next;
  }
  
- Prev: get DoubleNode{
+ Prev: get This{
    return .prev;
  }
 
- LinkNext: function(node: = DoubleNode){
+ LinkNext: function(node: = This){
   .next = node
   node.prev = this
  }
  
- LinkPrev: function(node: = DoubleNode){
+ LinkPrev: function(node: = This){
   .prev = node
   node.next = this
  }
 
- Link: function(prev: = DoubleNode, next: = DoubleNode){
+ Link: function(prev: = This, next: = This){
   .LinkPrev(prev)
   .LinkNext(next)
  }
@@ -46,26 +46,26 @@ DoubleNode{
   return .next != this
  }
 
- MoveBuddiesTo: function(target: = DoubleNode){
+ MoveBuddiesTo: function(target: = This){
   .next.LinkPrev(target.prev)
   .prev.LinkNext(target)
   .Reset(this)
  }
 
- MoveBuddiesToFront: function(target: = DoubleNode){
+ MoveBuddiesToFront: function(target: = This){
   .next.LinkPrev(target)
   .prev.LinkNext(target.next)
   .Reset(this)
  }
 
- SwapBuddies: function(target: = DoubleNode){
-  tmp: DoubleNode
+ SwapBuddies: function(target: = This){
+  tmp: This
   tmp.Reset()
   .MoveBuddiesTo(tmp)
   target.MoveBuddiesTo(this)
   tmp.MoveBuddiesTo(target)
  }
 private:
- next: DoubleNode
- prev: DoubleNode 
+ next: This
+ prev: This 
 }

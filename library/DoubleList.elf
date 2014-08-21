@@ -3,14 +3,14 @@ version: 0
 //Author: elf
 //EMail: elf198012@gmail.com
 
-root: elf
+root: elf.DoubleList
 
 import{
  elf.List
  elf.DoubleNode
 }
 
-DoubleList: List{
+class(List){
 .Reset = function{
   .entry.Reset()
 }
