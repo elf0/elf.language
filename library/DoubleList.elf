@@ -73,15 +73,15 @@ class(List){
 }
 
 //move to back
-.MoveTo = function(target: = DoubleList){
+.MoveTo = function(target: = This){
   .entry.MoveBuddiesTo(target.entry)
 }
 
-.MoveToFront = function(target: = DoubleList){
+.MoveToFront = function(target: = This){
   .entry.MoveBuddiesToFront(target.entry)
 }
 
-.Swap = function(target: = DoubleList){
+.Swap = function(target: = This){
   .entry.SwapBuddies(target.entry)
 }
 private:
