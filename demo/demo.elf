@@ -43,6 +43,7 @@ F0: function->(result: U32){
 F0: function(a: U32, b: U32)->(result: U32){
 }
 
+//error code or exception?
 Div: function(a: U32, b: U32)->(result: U32)error[DivByZero]{
  if(b == 0)
   error = DivByZero
