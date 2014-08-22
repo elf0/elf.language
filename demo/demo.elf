@@ -1,0 +1,48 @@
+version: 0
+
+root: elf.demo
+
+//constant
+pi: 3.1415926
+
+//variable
+i: U32 = 0
+point: Point{0, 0}
+
+//Function constant.
+//No input and output
+F0(){
+}
+
+//Only input
+F0(a: U32, b: U32){
+}
+
+//Only Output
+F0->(result: U32){
+}
+
+F0(a: U32, b: U32)->(result: U32){
+}
+
+//Function variable.
+//No input and output
+F0: function{
+}
+
+//Only input
+F0: function(a: U32, b: U32){
+}
+
+//Only Output
+F0: function->(result: U32){
+}
+
+F0: function(a: U32, b: U32)->(result: U32){
+}
+
+Div: function(a: U32, b: U32)->(result: U32)error[DivByZero]{
+ if(b == 0)
+  error = DivByZero
+ result = a / b
+}

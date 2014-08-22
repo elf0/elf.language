@@ -6,7 +6,7 @@ version: 0
 root: elf.List
 
 import{
-  DoubleNode
+  elf.DoubleNode
 }
 
 interface{
