@@ -9,7 +9,13 @@ hello: "Hello, World!"
 
 //variable
 i: U32 = 0
-point: Point{0, 0}
+point0: Point{0, 0}
+
+//reference point0
+point1: point0
+
+//Use type of point0, Assign new value
+point2: point0{1, 1}
 
 //Function constant.
 //No input and output
