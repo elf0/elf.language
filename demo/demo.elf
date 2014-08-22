@@ -3,7 +3,9 @@ version: 0
 root: elf.demo
 
 //constant
+i: 0
 pi: 3.1415926
+hello: "Hello, World!"
 
 //variable
 i: U32 = 0
