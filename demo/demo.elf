@@ -53,3 +53,6 @@ Div: function(a: U32, b: U32)->(result: U32)error[DivByZero]{
   error = DivByZero
  result = a / b
 }
+
+//type definition?
+F0(a: U32, b: U32)->(result: U32)
