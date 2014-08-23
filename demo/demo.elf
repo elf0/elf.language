@@ -6,9 +6,10 @@ root: elf.demo
 i: 0
 pi: 3.1415926
 hello: "Hello, World!"
+location: {0.0, 0.0}
 
 //variable
-i: U32 = 0
+i: U32{0}
 point0: Point{0, 0}
 
 //reference point0
@@ -39,7 +40,7 @@ F0(a: U32, b: U32)->(result: U32){
 
 //Function variable.
 //No input and output
-F0: function{
+F0: function = {
 }
 
 //Only input
@@ -62,3 +63,16 @@ Div: function(a: U32, b: U32)->(result: U32)error[DivByZero]{
 
 //type definition?
 F0(a: U32, b: U32)->(result: U32)
+
+//class
+A{
+ a: i32
+}
+
+B{
+ b: i32
+}
+
+C: A, B{
+ c: i32
+}
