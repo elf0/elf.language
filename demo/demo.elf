@@ -77,7 +77,7 @@ B: class{
 
 C: class{
  A; extract A
- b: B; reference members of B by b
+ b: B
  c: i32
 }
 
