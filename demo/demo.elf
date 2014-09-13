@@ -84,4 +84,4 @@ Name: get string
 Name: set string
 
 //index
-Value: index(Key: string)->(string)
+Value: index(Key: string)->string
