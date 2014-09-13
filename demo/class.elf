@@ -34,6 +34,7 @@ Dog: class{
  }
 }
 
+;index
 Map: class{
  index(Key: string)->string{
  }
@@ -42,5 +43,10 @@ Map: class{
  }
 
  Value: index(i: U32)->string{
+ }
+}
+
+Human: class{
+ index(strFirstName: string, strLastName: string)->string{
  }
 }
