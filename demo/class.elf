@@ -18,13 +18,19 @@ C: class{
 
 //propery
 Dog: class{
- Name: ->string{
+ Name: get string{
   return .strName
  }
 
- Name: <-string{
-  .strName <- value
+ Name: set string{
+  .strName = value
  }
 
  strName: string
+
+;"is" method
+ Animal: is{
+  return true
+ }
 }
+

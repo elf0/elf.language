@@ -69,11 +69,4 @@ F0: alias function(a: U32, b: U32)->(result: U32)
 ;index
 Value: index(Key: string)->string
 
-A: class{
-;"is" method
- Empty: is{
-  return .bEmpty
- }
 
- bEmpty: bool
-}
