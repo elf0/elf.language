@@ -63,19 +63,21 @@ Div: function(a: U32, b: U32)->(result: U32)error[DivByZero]{
 
 //type definition?
 F0(a: U32, b: U32)->(result: U32)
+F0: type(a: U32, b: U32)->(result: U32)
+F0: function(a: U32, b: U32)->(result: U32)
 
 //class
-A{
+A: class{
  a: i32
 }
 
-B{
+B: class{
  b: i32
 }
 
-C{
- A
- B
+C: class{
+ A; extract A
+ b: B; reference members of B by b
  c: i32
 }
 
@@ -87,3 +89,12 @@ Name: <-string
 
 //index
 Value: index(Key: string)->string
+
+A: class{
+//"is" method
+ Empty: is{
+  return .bEmpty
+ }
+
+ bEmpty: bool
+}
