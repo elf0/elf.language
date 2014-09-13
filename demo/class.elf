@@ -16,8 +16,8 @@ C: class{
  c: i32
 }
 
-//propery
 Dog: class{
+;propery
  Name: get string{
   return .strName
  }
