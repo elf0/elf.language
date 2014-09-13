@@ -1,0 +1,30 @@
+version: 0
+
+root: demo
+
+A: class{
+ a: i32
+}
+
+B: class{
+ b: i32
+}
+
+C: class{
+ A; extract A
+ B
+ c: i32
+}
+
+//propery
+Dog: class{
+ Name: ->string{
+  return .strName
+ }
+
+ Name: <-string{
+  .strName <- value
+ }
+
+ strName: string
+}

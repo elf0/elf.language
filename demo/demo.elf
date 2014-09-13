@@ -66,26 +66,7 @@ F0(a: U32, b: U32)->(result: U32)
 F0: type(a: U32, b: U32)->(result: U32)
 F0: function(a: U32, b: U32)->(result: U32)
 
-//class
-A: class{
- a: i32
-}
 
-B: class{
- b: i32
-}
-
-C: class{
- A; extract A
- b: B
- c: i32
-}
-
-//propery
-
-Name: ->string
-
-Name: <-string
 
 //index
 Value: index(Key: string)->string
