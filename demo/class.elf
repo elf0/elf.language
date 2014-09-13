@@ -37,4 +37,10 @@ Dog: class{
 Map: class{
  index(Key: string)->string{
  }
+
+ Key: index(i: U32)->string{
+ }
+
+ Value: index(i: U32)->string{
+ }
 }
