@@ -46,7 +46,7 @@ Map: class{
  }
 }
 
-Human: class{
- index(strFirstName: string, strLastName: string)->string{
+HumanDB: class{
+ Persons: index(strFirstName: string, strLastName: string)->IdSet{
  }
 }
