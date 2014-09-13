@@ -1,6 +1,7 @@
 version: 0
 
 ;namespace can not be nested
+;"root" is parent node, all others are children of "root"
 
 root: a
 
