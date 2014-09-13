@@ -1,0 +1,14 @@
+version: 0
+
+;namespace can not be nested
+
+root: a
+
+b{
+}b
+
+b.c{
+}b.c
+
+b.c.d{
+}b.c.d
