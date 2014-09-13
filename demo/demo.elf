@@ -79,7 +79,7 @@ C: A, B{
 
 //propery
 
-Name: get string
+Name: ->string
 
 Name: set string
 
