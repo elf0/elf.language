@@ -81,7 +81,7 @@ C: A, B{
 
 Name: ->string
 
-Name: set string
+Name: <-string
 
 //index
 Value: index(Key: string)->string
