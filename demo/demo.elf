@@ -76,3 +76,12 @@ B{
 C: A, B{
  c: i32
 }
+
+//propery
+
+Name: get string
+
+Name: set string
+
+//index
+Value: index(Key: string)->(string)
