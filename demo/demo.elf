@@ -1,6 +1,6 @@
 version: 0
 
-root: elf.demo
+node: elf.demo
 
 //constant
 i: 0
