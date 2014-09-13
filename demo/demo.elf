@@ -18,54 +18,6 @@ point1: point0
 ;Use type of point0, Assign new value
 point2: point0{1, 1}
 
-;Function constant.
-;No input and output
-F0: (){
-}
-
-;Only input
-F0: (a: U32, b: U32){
-}
-
-;Input a writable object "a"
-F0: (a: = U32){
-}
-
-;Only Output
-F0: ->(result: U32){
-}
-
-F0: (a: U32, b: U32)->(result: U32){
-}
-
-;Function variable.
-;No input and output
-F0: function{
-}
-
-;Only input
-F0: function(a: U32, b: U32){
-}
-
-;Only Output
-F0: function->(result: U32){
-}
-
-F0: function(a: U32, b: U32)->(result: U32){
-}
-
-;error code or exception?
-Div: function(a: U32, b: U32)->(result: U32)error[DivByZero]{
- if(b == 0)
-  error = DivByZero
- result = a / b
-}
-
-;alias
-F0: alias function(a: U32, b: U32)->(result: U32)
-
-
-
 ;index
 Value: index(Key: string)->string
 
