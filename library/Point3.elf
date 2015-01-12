@@ -11,8 +11,7 @@ import{
 
 Point3<T>{
   new(x: T, y: T, z: T){
-    .x = x
-    .y = y
+    Point.new(x, y)
     .z = z
   }
 
