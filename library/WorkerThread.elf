@@ -1,0 +1,123 @@
+version: 0
+
+//License: Public Domain
+//Author: elf
+//EMail: elf198012@gmail.com
+
+import{
+ elf.List
+ elf.Thread
+ elf.Thread.Condition
+}
+
+root: elf.WorkerThread
+
+TaskEntry: (task: Task)->Bool;
+TaskFinalize: (task: Task);
+
+Task{
+ node: DoubleNode;
+ Entry: TaskEntry;
+ Finalize: TaskFinalize;
+}
+
+Task.Initialize(TaskEntry Entry, TaskFinalize Finalize){
+ .Entry = Entry;
+ .Finalize = Finalize;
+}
+
+
+WorkerThread{
+ thread: Thread;
+ lock: ThreadLock;
+ condition: ThreadCondition;
+ tasks: List;
+ pendingTasks: List;
+}
+
+.Initialize(){
+ .thread.Initialize((ThreadEntry)WorkerThread_Entry);
+ .lock.Initialize();
+ .condition.Initialize();
+ .tasks.Initialize();
+ .pendingTasks.Initialize();
+}
+
+.Finalize(){
+ .condition.Finalize();
+ .lock.Finalize();
+}
+
+.Run()->Bool{
+ return .thread.Run();
+}
+
+.Post(task: Task){
+ .lock.Lock();
+ .pendingTasks.Push((DoubleNode)task);
+ .lock.Unlock();
+
+ .condition.Signal();
+}
+
+//Do not post Empty task list
+.PostTasks(tasks: List){
+ .lock.Lock();
+ tasks.MoveTo(.pendingTasks);
+ .lock.Unlock();
+
+ .condition.Signal();
+}
+
+HaveTasks(tasks: List)->Bool{
+ return tasks.NotEmpty();
+}
+
+NoTasks(tasks: List)->Bool{
+ return tasks.Empty();
+}
+
+MoveTasks(pendingTasks: List, tasks: List){
+ pendingTasks.MoveTo(pTasks);
+}
+
+.WaitTasks(){
+  tasks: List = .tasks;
+  pendingTasks: List = .pendingTasks;
+
+  .lock.Lock();
+
+  if(HaveTasks(pendingTasks))
+   MoveTasks(pendingTasks, tasks);
+
+  if(NoTasks(tasks)){
+   .condition.Wait(.lock);
+   MoveTasks(pendingTasks, tasks);
+  }
+
+  .lock.Unlock();
+}
+
+.RunTasks(){
+ entry: DoubleNode = (DoubleNode).tasks;
+ node: DoubleNode = entry.next;
+ task: Task;
+ while(node != entry){
+  task = (Task)node;
+  if(task.Entry(task)){
+   .tasks.Remove(pNode);
+   node = node.next;
+   task.Finalize(task);
+  }
+  else
+   node = node.next;
+ }
+}
+
+.Entry()->void *{
+ while(true){
+  .WaitTasks();
+  .RunTasks();
+ }
+ return null;
+}
