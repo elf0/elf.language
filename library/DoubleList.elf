@@ -10,80 +10,80 @@ import{
  elf.DoubleNode
 }
 
-class(List){
-.Reset = function{
+List{
+$Reset = {
   .entry.Reset()
 }
 
-.Initialize = function{
+$Initialize = {
   .Reset()
 }
 
-.Empty = is{
-  return .entry is Alone
+?is Empty = {
+  return "Is .entry Alone?"
 }
 
-.Empty = is not{
+?is not Empty = {
   return .entry is not Alone
 }
 
-.Front = get DoubleNode{
+$get Front = DoubleNode{
  return entry.Next
 }
 
-.Back = get DoubleNode{
+$get Back = DoubleNode{
  return entry.Prev
 }
 
-.Insert = function(node: = DoubleNode, where: = DoubleNode){
+$Insert = (node: = DoubleNode, where: = DoubleNode){
   node.Link(where.Prev, where)
 }
 
-.InsertAfter = function(node: = DoubleNode, where: = DoubleNode){
+$InsertAfter = (node: = DoubleNode, where: = DoubleNode){
   node.Link(where, where.Next)
 }
 
-.Remove = function(node: = DoubleNode){
+$Remove = (node: = DoubleNode){
   node.Unlink()
 }
 
 //push back
-.Push = function(node: = DoubleNode){
+$Push = (node: = DoubleNode){
   node.Link(entry.Prev, entry)
 }
 
 //pop front
-.Pop = function->(node: DoubleNode){
+$Pop = ->(node: DoubleNode){
   node = entry.Next
   node.Unlink()
 }
 
-.PushFront = function(node: = DoubleNode){
+$.PushFront = (node: = DoubleNode){
   node.Link(entry, entry.Next)
 }
 
-.PopBack = function->(node: DoubleNode){
+$.PopBack = ->(node: DoubleNode){
   node = entry.Prev
   node.Unlink()
 }
 
-.MoveNodeToFront = function(node: = DoubleNode){
+$.MoveNodeToFront = (node: = DoubleNode){
   .Remove(node: DoubleNode)
   .PushFront(node: DoubleNode)
 }
 
 //move to back
-.MoveTo = function(target: = This){
+$.MoveTo = (target: = This){
   .entry.MoveBuddiesTo(target.entry)
 }
 
-.MoveToFront = function(target: = This){
+$.MoveToFront = (target: = This){
   .entry.MoveBuddiesToFront(target.entry)
 }
 
-.Swap = function(target: = This){
+$.Swap = (target: = This){
   .entry.SwapBuddies(target.entry)
 }
 private:
   entry: DoubleNode
-}
+}List

@@ -3,63 +3,63 @@ version: 0
 //Author: elf
 //EMail: elf198012@gmail.com
 
-root: elf.DoubleNode
+root: elf
 
-class{
- Next: get This{
+DoubleNode{
+$get Next: This{
    return .next;
  }
  
- Prev: get This{
+$get Prev: This{
    return .prev;
  }
 
- LinkNext: function(node: = This){
+$LinkNext(node: = This){
   .next = node
   node.prev = this
  }
  
- LinkPrev: function(node: = This){
+$LinkPrev(node: = This){
   .prev = node
   node.next = this
  }
 
- Link: function(prev: = This, next: = This){
+$Link(prev: = This, next: = This){
   .LinkPrev(prev)
   .LinkNext(next)
  }
 
- Unlink: function{
+$Unlink{
   .prev.next = .next
   .next.prev = .prev
  }
 
- Reset: function{
+$Reset{
   .prev = .next = this
  }
 
- Alone: is{
+?Alone{
   return .next == this
  }
 
- Alone: is not{
+?not Alone{
   return .next != this
  }
 
- MoveBuddiesTo: function(target: = This){
+$MoveBuddiesTo(target: = This){
   .next.LinkPrev(target.prev)
   .prev.LinkNext(target)
   .Reset(this)
  }
 
- MoveBuddiesToFront: function(target: = This){
+$MoveBuddiesToFront(target: = This){
   .next.LinkPrev(target)
   .prev.LinkNext(target.next)
   .Reset(this)
  }
 
- SwapBuddies: function(target: = This){
-  tmp: This
+$SwapBuddies(target: = This){
+  @tmp: This
   tmp.Reset()
   .MoveBuddiesTo(tmp)
   target.MoveBuddiesTo(this)
@@ -68,4 +68,4 @@ class{
 private:
  next: This
  prev: This 
-}
+}DoubleNode

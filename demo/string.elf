@@ -1,0 +1,21 @@
+text1: 'Hello, "w"orld!'
+text2: "Hello, 'w'orld!"
+
+text3: 'Hello,
+ "w"orld!'
+
+text4: "Hello,
+ 'w'orld!"
+
+text5: '''Hell"o",
+ 'w'orld!'''
+
+text6: ''''''''Hell"o",
+ 'w'orld!''''''''
+
+text7: ""Hell"o",
+ 'w'orld!""
+
+text8: """""""""""""Hell"o",
+ 'w'orld!"""""""""""""
+
