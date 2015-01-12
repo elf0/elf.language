@@ -3,34 +3,41 @@ version: 0
 //Author: elf
 //EMail: elf198012@gmail.com
 
-root: elf.Point3
+root: elf
 
 import{
  Point
 }
 
-class<T>(Point<T>){
+Point3<T>{
+  new(x: T, y: T, z: T){
+    .x = x
+    .y = y
+    .z = z
+  }
+
   set(x: T, y: T, z: T){
     Point(x, y)
-    .z = value
+    .z = z
   }
   
-  Z: get T{
+  get Z: T{
     return .z
   }
 
-  Z: set T{
+  set Z: T{
     .z = value
   }
   
-  OffsetZ: set T{
+  set OffsetZ: T{
     .z += value
   }
   
-  Offset: set(x: T, y: T, z: T){
+  set Offset: (x: T, y: T, z: T){
     Point.Offset(x, y)
     .z += z
   }
 private:
+  Point<T>
   z: T
 }
