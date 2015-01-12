@@ -2,21 +2,21 @@ version: 0
 
 root: demo
 
-A: class{
+A{
  a: i32
 }
 
-B: class{
+B{
  b: i32
 }
 
-C: class{
+C{
  A; extract A
  B
  c: i32
 }
 
-Dog: class{
+Dog{
 ;propery
  Name: get string{
   return .strName
@@ -35,7 +35,7 @@ Dog: class{
 }
 
 ;index
-Map: class{
+Map{
  index(Key: string)->string{
  }
 
@@ -46,7 +46,7 @@ Map: class{
  }
 }
 
-HumanDB: class{
+HumanDB{
  Persons: index(strFirstName: string, strLastName: string)->IdSet{
  }
 }
