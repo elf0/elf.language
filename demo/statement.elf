@@ -1,0 +1,12 @@
+F0(a: U32, b: U32)->(c: U32){
+ if a > b, return c = a + b
+ return 0
+}
+
+F1(a: U32, b: U32)->(c: U32){
+ if a > b, return{
+    c = a + b
+    c = 1;
+ }
+ return 0
+}

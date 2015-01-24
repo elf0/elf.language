@@ -6,11 +6,11 @@ version: 0
 root: elf
 
 DoubleNode{
-$get Next: This{
+ get Next: This{
    return .next;
  }
  
-$get Prev: This{
+ get Prev: This{
    return .prev;
  }
 

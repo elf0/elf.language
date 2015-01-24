@@ -1,21 +1,21 @@
 ;Function constant.
 ;No input and output
-F0: (){
+F0(){
 }
 
 ;Only input
-F0: (a: U32, b: U32){
+F0(a: U32, b: U32){
 }
 
 ;Input a writable object "a"
-F0: (a: = U32){
+F0(a: = U32){
 }
 
 ;Only Output
-F0: ->(result: U32){
+F0->(result: U32){
 }
 
-F0: (a: U32, b: U32)->(result: U32){
+F0(a: U32, b: U32)->(result: U32){
 }
 
 ;Function variable.
