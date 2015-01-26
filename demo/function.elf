@@ -7,10 +7,6 @@ F0(){
 F0(a: U32, b: U32){
 }
 
-;Input a writable object "a"
-F0(a: = U32){
-}
-
 ;Only Output
 F0->(result: U32){
 }
