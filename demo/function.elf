@@ -34,7 +34,7 @@ F0: function(a: U32, b: U32)->(result: U32){
 Div: function(a: U32, b: U32)->(result: U32)error[DivByZero]{
  if($b == 0)
   error = DivByZero
- result = $a / $b
+ $result = $a / $b
 }
 
 ;alias
