@@ -10,3 +10,8 @@ F1(a: U32, b: U32)->(c: U32){
  }
  return 0
 }
+
+LOOP0(){
+ loop 3 times{
+ }
+}
