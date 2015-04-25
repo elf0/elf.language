@@ -31,16 +31,16 @@ WorkerThread{
  thread: Thread;
  lock: ThreadLock;
  condition: ThreadCondition;
- tasks: List;
- pendingTasks: List;
+ runnings: List;
+ pendings: List;
 }
 
 .Initialize(){
  .thread.Initialize((ThreadEntry)WorkerThread_Entry);
  .lock.Initialize();
  .condition.Initialize();
- .tasks.Initialize();
- .pendingTasks.Initialize();
+ .runnings.Initialize();
+ .pendings.Initialize();
 }
 
 .Finalize(){
@@ -54,58 +54,57 @@ WorkerThread{
 
 .Post(task: Task){
  .lock.Lock();
- .pendingTasks.Push((DoubleNode)task);
+ .pendings.Push((DoubleNode)task);
  .lock.Unlock();
 
  .condition.Signal();
 }
 
 //Do not post Empty task list
-.PostTasks(tasks: List){
+.PostTasks(runnings: List){
  .lock.Lock();
- tasks.MoveTo(.pendingTasks);
+ runnings.MoveTo(.pendings);
  .lock.Unlock();
 
  .condition.Signal();
 }
 
-HaveTasks(tasks: List)->Bool{
- return tasks.NotEmpty();
+has Tasks(runnings: List)->Bool{
+ return runnings.NotEmpty();
 }
 
-NoTasks(tasks: List)->Bool{
- return tasks.Empty();
+NoTasks(runnings: List)->Bool{
+ return runnings.Empty();
 }
 
-MoveTasks(pendingTasks: List, tasks: List){
- pendingTasks.MoveTo(pTasks);
+MoveTasks(pendings: List, runnings: List){
+ pendings.MoveTo(pTasks);
 }
 
 .WaitTasks(){
-  tasks: List = .tasks;
-  pendingTasks: List = .pendingTasks;
+  runnings: .runnings;
+  pendings: .pendings;
 
-  .lock.Lock();
+  $Lock .lock;
 
-  if(HaveTasks(pendingTasks))
-   MoveTasks(pendingTasks, tasks);
-
-  if(NoTasks(tasks)){
+  if .pendings has Tasks,
+   MoveTasks(.pendings, .runnings);
+  else if .runnings no Tasks, {
    .condition.Wait(.lock);
-   MoveTasks(pendingTasks, tasks);
+   MoveTasks(.pendings, .runnings);
   }
 
-  .lock.Unlock();
+  $Unlock .lock;
 }
 
 .RunTasks(){
- entry: DoubleNode = (DoubleNode).tasks;
+ entry: DoubleNode(.runnings);
  node: DoubleNode = entry.next;
  task: Task;
  while(node != entry){
   task = (Task)node;
   if(task.Entry(task)){
-   .tasks.Remove(pNode);
+   .runnings.Remove(pNode);
    node = node.next;
    task.Finalize(task);
   }

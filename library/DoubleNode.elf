@@ -38,11 +38,11 @@ $Reset{
   .prev = .next = this
  }
 
-?Alone{
+is Alone{
   return .next == this
  }
 
-?not Alone{
+is not Alone{
   return .next != this
  }
 

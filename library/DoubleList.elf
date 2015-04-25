@@ -23,15 +23,15 @@ $Initialize = {
   return "Is .entry Alone?"
 }
 
-?is not Empty = {
+Empty: is not{
   return .entry is not Alone
 }
 
-$get Front = DoubleNode{
+Front: get DoubleNode{
  return entry.Next
 }
 
-$get Back = DoubleNode{
+Back: get DoubleNode{
  return entry.Prev
 }
 
