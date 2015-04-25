@@ -7,7 +7,7 @@ i: 0
 pi: 3.1415926
 hello: "Hello, World!"
 location: {0.0, 0.0}
-for x interval(0, 100],{
+for x in interval(0, 100],{
  print(x)
 }
 
