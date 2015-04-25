@@ -18,15 +18,15 @@ C{
 
 Dog{
 ;propery
- get Name: string{
+ get Name: String{
   return .strName
  }
 
- set Name: string{
+ set Name: String{
   .strName = value
  }
 
- strName: string
+ strName: String
 
 ;"is" method
  is Animal{
@@ -36,17 +36,17 @@ Dog{
 
 ;index
 Map{
- index(Key: string)->string{
+ index(Key: String)->(value: String){
  }
 
- Key: index(i: U32)->string{
+ Key: index(i: U32)->(value: String){
  }
 
- Value: index(i: U32)->string{
+ Value: index(i: U32)->(value: String){
  }
 }
 
 HumanDB{
- Persons: index(strFirstName: string, strLastName: string)->IdSet{
+ Persons: index(strFirstName: String, strLastName: String)->IdSet{
  }
 }

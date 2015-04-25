@@ -1,9 +1,9 @@
-F0(a: U32, b: U32)->(c: U32){
+$F0(a: U32, b: U32)->(c: U32){
  if a > b, return c = a + b
  return 0
 }
 
-F1(a: U32, b: U32)->(c: U32){
+$F1(a: U32, b: U32)->(c: U32){
  if a > b, return{
     c = a + b
     c = 1;
@@ -11,7 +11,7 @@ F1(a: U32, b: U32)->(c: U32){
  return 0
 }
 
-LOOP0(){
+$LOOP0(){
  loop 3 times{
  }
 }

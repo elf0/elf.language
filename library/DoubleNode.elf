@@ -5,6 +5,21 @@ version: 0
 
 root: elf
 
+interface DoubleNode{
+ get Next: This;
+ get Prev: This;
+ LinkNext(node:= This)
+ LinkPrev(node:= This)
+ Link(prev:= This, next:= This)
+ Unlink
+ Reset
+ Alone: is
+ Alone: is not
+ MoveBuddiesTo(target:= This);
+ MoveBuddiesToFront(target:= This){
+ SwapBuddies(target:= This);
+}
+
 DoubleNode{
  get Next: This{
    return .next;
@@ -14,17 +29,17 @@ DoubleNode{
    return .prev;
  }
 
-$LinkNext(node: = This){
+$LinkNext(node:= This){
   .next = node
   node.prev = this
  }
  
-$LinkPrev(node: = This){
+$LinkPrev(node:= This){
   .prev = node
   node.next = this
  }
 
-$Link(prev: = This, next: = This){
+$Link(prev:= This, next:= This){
   .LinkPrev(prev)
   .LinkNext(next)
  }
@@ -38,32 +53,31 @@ $Reset{
   .prev = .next = this
  }
 
-is Alone{
+Alone: is{
   return .next == this
  }
 
-is not Alone{
+Alone: is not{
   return .next != this
  }
 
-$MoveBuddiesTo(target: = This){
+$MoveBuddiesTo(target:= This){
   .next.LinkPrev(target.prev)
   .prev.LinkNext(target)
-  .Reset(this)
+  .Reset()
  }
 
-$MoveBuddiesToFront(target: = This){
+$MoveBuddiesToFront(target:= This){
   .next.LinkPrev(target)
   .prev.LinkNext(target.next)
-  .Reset(this)
+  .Reset()
  }
 
-$SwapBuddies(target: = This){
-  @tmp: This
-  tmp.Reset()
-  .MoveBuddiesTo(tmp)
-  target.MoveBuddiesTo(this)
-  tmp.MoveBuddiesTo(target)
+$SwapBuddies(target:= This){
+  tmp: This
+  tmp = this
+  this = target
+  target = tmp
  }
 private:
  next: This
