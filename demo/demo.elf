@@ -7,6 +7,7 @@ i: 0
 pi: 3.1415926
 hello: "Hello, World!"
 location: {0.0, 0.0}
+itv: interval(0, 100]
 
 ;variable
 i: U32{0}
@@ -14,6 +15,7 @@ point0: Point{0, 0}
 
 ;reference point0
 point1: point0
+;"point1 is point0" equals true
 
 ;Use type of point0, Assign new value
 point2: point0{1, 1}
