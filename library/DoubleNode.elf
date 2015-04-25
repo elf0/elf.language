@@ -1,24 +1,9 @@
 version: 0
-//License: Public Domain
-//Author: elf
-//EMail: elf198012@gmail.com
+#License: Public Domain
+#Author: elf
+#EMail: elf198012@gmail.com
 
 root: elf
-
-interface DoubleNode{
- get Next: This;
- get Prev: This;
- LinkNext(node:= This)
- LinkPrev(node:= This)
- Link(prev:= This, next:= This)
- Unlink
- Reset
- Alone: is
- Alone: is not
- MoveBuddiesTo(target:= This);
- MoveBuddiesToFront(target:= This){
- SwapBuddies(target:= This);
-}
 
 DoubleNode{
  get Next: This{
