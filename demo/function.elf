@@ -1,49 +1,49 @@
-;Function constant.
-;No input and output
+#Function constant.
+#No input and output
 F0$${
 }$
 
-;Only input
+#Only input
 F0$a: U32, b: U32${
 }$
 
-;Only Output
+#Only Output
 F0$->result: U32${
 }$
 
 F0$a: U32, b: U32->result: U32${
 }$
 
-;Function variable.
-;No input and output
+#Function variable.
+#No input and output
 F0: ${
 }$
 
-;Only input
+#Only input
 F0: $a: U32, b: U32${
 }$
 
-;Only Output
+#Only Output
 F0: $->result: U32${
 }$
 
 F0: $a: U32, b: U32->result: U32${
 }$
 
-;error code or exception?
+#error code or exception?
 Div: $a: U32, b: U32->result: U32)error[DivByZero]${
- if($b == 0)
+ if(b == 0)
   error = DivByZero
- $result = $a / $b
+ result = a / b
 }$
 
-;Function constant and variable
+#Function constant and variable
 sin: Sin$a: F32->result: F32${
 }$
 
-//Input a container and a function
+#Input a container and a function
 ForEach$container, f: $a${
 }$
 
-;alias
-F0: alias $(a: U32, b: U32)->(result: U32)$
+#prototype
+F0$(a: U32, b: U32)->(result: U32)$$
