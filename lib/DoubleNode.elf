@@ -6,64 +6,64 @@ version: 0
 root: elf
 
 DoubleNode{
- get Next: This{{
+ Next$->This{
    return .next;
- }}
+ }$
  
- get Prev: This{{
+ Prev$->This{
    return .prev;
- }}
+ }$
 
-$LinkNext(node:= This){{
+LinkNext$(node:= This){
   .next = node
   node.prev = this
- }}
+ }$
  
-$LinkPrev(node:= This){{
+LinkPrev$(node:= This){
   .prev = node
   node.next = this
- }}
+ }$
 
-$Link(prev:= This, next:= This){{
+Link$(prev:= This, next:= This){
   .LinkPrev(prev)
   .LinkNext(next)
- }}
+ }$
 
-$Unlink{{
+Unlink${
   .prev.next = .next
   .next.prev = .prev
- }}
+ }$
 
-$Reset{{
+Reset${
   .prev = .next = this
- }}
+ }$
 
-Alone: is{{
+Alone$is{
   return .next == this
- }}
+ }$
 
-Alone: is not{{
+Alone$is not{
   return .next != this
- }}
+ }$
 
-$MoveBuddiesTo(target:= This){{
+MoveBuddiesTo$(target:= This){
   .next.LinkPrev(target.prev)
   .prev.LinkNext(target)
   .Reset()
- }}
+ }$
 
-$MoveBuddiesToFront(target:= This){{
+MoveBuddiesToFront$(target:= This){
   .next.LinkPrev(target)
   .prev.LinkNext(target.next)
   .Reset()
- }}
+ }$
 
-$SwapBuddies(target:= This){{
+SwapBuddies$(target:= This){
   tmp: This
   tmp = this
   this = target
   target = tmp
- }}
+ }$
 private:
  next: This
  prev: This 
