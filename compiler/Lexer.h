@@ -97,7 +97,7 @@ TokenType Lexer::Read(){
         //0x18
         &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID,
         //space ! " # $ % & '
-        &&L_NEXT, &&L_C_INVALID, &&L_C_INVALID, &&L_C_SHARP, &&L_C_DOLLAR, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID,
+        &&L_NEXT, &&L_C_INVALID, &&L_C_QUOTATION, &&L_C_SHARP, &&L_C_DOLLAR, &&L_C_INVALID, &&L_C_INVALID, &&L_C_SINGLE_QUOTATION,
         //( ) * + , - . /
         &&L_C_PARENTHESIS_OPEN, &&L_C_PARENTHESIS_CLOSE, &&L_C_STAR, &&L_C_PLUS, &&L_C_COMMA, &&L_C_MINUS, &&L_C_DOT, &&L_C_SLASH,
         //0 1 2 3 4 5 6 7
@@ -156,17 +156,108 @@ L_C_CARRIAGE_RETURN://0x0D
     if(*p == 0x0A)
         ++p;
     goto L_C_LINE_FEED;
-L_C_SHARP:
-    //FIXME: Only 0x0D in source?
-    *_pEnd = 0x0A;
-    p = (Char*)String_SkipUntil(p, 0x0A);
-    if(p++ != _pEnd)
-        goto L_C_LINE_FEED;
-    else
-        goto L_C_EOS;
+L_C_QUOTATION:{
+        Char *pBeginBegin = p - 1;
+        p = (Char*)String_Skip(p, '"');
+        _token.pBegin = p;
+        U32 nBeginCount = p - pBeginBegin;
+L_C_QUOTATION_RETRY:
+        *_pEnd = '"';
+        while(true){
+            c = *p++;
+            //FIXME: Only 0x0D in source?
+            if(c == 0x0A){
+                _pLine = p;
+                ++_nLine;
+            }
+            else if(c == '"'){
+                *_pEnd = 0;
+                if(p > _pEnd)
+                    goto L_C_EOS;//FIXME: Error, Expect end
+
+                Char *pEndBegin = p - 1;
+                p = (Char*)String_Skip(p, '"');
+                U32 nEndCount = p - pEndBegin;
+                if(nEndCount != nBeginCount)
+                    goto L_C_QUOTATION_RETRY;
+                _token.pEnd = pEndBegin;
+                _pChar = p;
+                return tkQuotation;
+            }
+        }
+    }
+L_C_SHARP:{
+        Char *pBeginBegin = p - 1;
+        p = (Char*)String_Skip(p, '#');
+        U32 nBeginCount = p - pBeginBegin;
+        if(nBeginCount > 1){
+L_C_SHARP_RETRY:
+            *_pEnd = '#';
+            while(true){
+                c = *p++;
+                //FIXME: Only 0x0D in source?
+                if(c == 0x0A){
+                    _pLine = p;
+                    ++_nLine;
+                }
+                else if(c == '#'){
+                    *_pEnd = 0;
+                    if(p > _pEnd)
+                        goto L_C_EOS;
+
+                    Char *pEndBegin = p - 1;
+                    p = (Char*)String_Skip(p, '#');
+                    U32 nEndCount = p - pEndBegin;
+                    if(nEndCount != nBeginCount)
+                        goto L_C_SHARP_RETRY;
+                    goto L_NEXT;
+                }
+            }
+        }
+        else{
+            //FIXME: Only 0x0D in source?
+            *_pEnd = 0x0A;
+            p = (Char*)String_SkipUntil(p, 0x0A);
+            *_pEnd = 0;
+            if(p++ != _pEnd)
+                goto L_C_LINE_FEED;
+            else
+                goto L_C_EOS;
+        }
+    }
 L_C_DOLLAR:
     _pChar = p;
     return tkFunctionDefine;
+L_C_SINGLE_QUOTATION:{
+        Char *pBeginBegin = p - 1;
+        p = (Char*)String_Skip(p, '\'');
+        _token.pBegin = p;
+        U32 nBeginCount = p - pBeginBegin;
+L_C_SINGLE_QUOTATION_RETRY:
+        *_pEnd = '\'';
+        while(true){
+            c = *p++;
+            //FIXME: Only 0x0D in source?
+            if(c == 0x0A){
+                _pLine = p;
+                ++_nLine;
+            }
+            else if(c == '\''){
+                *_pEnd = 0;
+                if(p > _pEnd)
+                    goto L_C_EOS;//FIXME: Error, Expect end
+
+                Char *pEndBegin = p - 1;
+                p = (Char*)String_Skip(p, '\'');
+                U32 nEndCount = p - pEndBegin;
+                if(nEndCount != nBeginCount)
+                    goto L_C_SINGLE_QUOTATION_RETRY;
+                _token.pEnd = pEndBegin;
+                _pChar = p;
+                return tkSingleQuotation;
+            }
+        }
+    }
 L_C_PARENTHESIS_OPEN:
     _pChar = p;
     return tkParenthesisOpen;
@@ -283,8 +374,15 @@ L_C_LOWER_I:
     goto L_C_IDENTIFIER;
 L_C_LOWER_I_CONTINUE:
     _pChar = p;
-    if((_token.pEnd - _token.pBegin) == 2 && _token.pBegin[1] == 'f')
-        return tkIf;
+    if((_token.pEnd - _token.pBegin) == 2){
+        Char c1 = _token.pBegin[1];
+        if(c1 == 'f')
+            return tkIf;
+        else if(c1 == 's')
+            return tkIs;
+        else if(c1 == 'n')
+            return tkIn;
+    }
     return tkIdentifierLower;
 
 
