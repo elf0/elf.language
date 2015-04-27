@@ -8,7 +8,7 @@ $F0(a: U32, b: U32){
 }$
 
 #Only Output
-$F0(->result: U32){
+$F0->(result: U32){
 }$
 
 $F0(a: U32, b: U32->result: U32){
@@ -24,7 +24,7 @@ $F0: (a: U32, b: U32){
 }$
 
 #Only Output
-$F0: (->result: U32){
+$F0: ->(result: U32){
 }$
 
 $F0: (a: U32, b: U32->result: U32){
@@ -46,4 +46,4 @@ $ForEach(container, $f: (a)){
 }$
 
 #prototype
-$F0(a: U32, b: U32)->(result: U32)$
+$F0(a: U32, b: U32->result: U32)$
