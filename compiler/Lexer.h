@@ -87,7 +87,6 @@ private:
 };
 
 TokenType Lexer::Read(){
-    static void *label_continue;
     static void *Labels[256]={
         //0x00
         &&L_C_EOS, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID,
@@ -140,6 +139,7 @@ TokenType Lexer::Read(){
         &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID,
     };
 
+    void *label_continue;
     Char c;
     Char *p = _pChar;
 L_NEXT:
@@ -301,4 +301,5 @@ L_C_INVALID:
 }
 
 #endif // LEXER_H
+
 
