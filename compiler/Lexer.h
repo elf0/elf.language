@@ -81,6 +81,7 @@ private:
     U32 _nLine = 1;
     union{
         Token _token;
+        U32 _u32Value;
         I64 _i64Value;
         F64 _f64Value;
     };
@@ -119,7 +120,7 @@ TokenType Lexer::Read(){
         //p q r s t u v w
         &&L_C_LOWER_P, &&L_C_LOWER_Q, &&L_C_LOWER_R, &&L_C_LOWER_S, &&L_C_LOWER_T, &&L_C_LOWER_U, &&L_C_LOWER_V, &&L_C_LOWER_W,
         //x y z { | } ~ 0x7F
-        &&L_C_LOWER_X, &&L_C_LOWER_Y, &&L_C_LOWER_Z, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID,
+        &&L_C_LOWER_X, &&L_C_LOWER_Y, &&L_C_LOWER_Z, &&L_C_BRACE_OPEN, &&L_C_INVALID, &&L_C_BRACE_CLOSE, &&L_C_INVALID, &&L_C_INVALID,
         //0x80
         &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID,
         &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID,
@@ -287,12 +288,14 @@ L_C_DIGIT:{
         p = (Char*)String_ParseI64(p, &i64Value);
         if(*p != '.'){
             _i64Value = i64Value;
+            _pChar = p;
             return tkIntegerLiteral;
         }
 
         Char *pFloat = p++;
         p = (Char*)String_SkipDigit(p);
         _f64Value = (F64)i64Value + strtod((const char *)pFloat, 0);
+        _pChar = p;
         return tkFloatLiteral;
     }
 L_C_LESS:
@@ -368,6 +371,21 @@ L_C_LOWER_IDENTIFIER_CONTINUE:
     _pChar = p;
     return tkIdentifierLower;
 
+L_C_BRACE_OPEN:{
+        Char *pBegin = p - 1;
+        p = (Char*)String_Skip(p, '{');
+        _u32Value = p - pBegin;
+        _pChar = p;
+        return tkBraceOpen;
+    }
+
+L_C_BRACE_CLOSE:{
+        Char *pBegin = p - 1;
+        p = (Char*)String_Skip(p, '{');
+        _u32Value = p - pBegin;
+        _pChar = p;
+        return tkBraceClose;
+    }
 
 L_C_LOWER_I:
     label_continue = &&L_C_LOWER_I_CONTINUE;
