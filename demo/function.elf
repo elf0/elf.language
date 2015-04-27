@@ -1,17 +1,17 @@
 #Function constant.
 #No input and output
-F0$${
+$F0{
 }$
 
 #Only input
-F0$a: U32, b: U32${
+$F0(a: U32, b: U32){
 }$
 
 #Only Output
-F0$->result: U32${
+$F0(->result: U32){
 }$
 
-F0$a: U32, b: U32->result: U32${
+$F0(a: U32, b: U32->result: U32){
 }$
 
 #Function variable.
@@ -20,30 +20,30 @@ F0: ${
 }$
 
 #Only input
-F0: $a: U32, b: U32${
+$F0: (a: U32, b: U32){
 }$
 
 #Only Output
-F0: $->result: U32${
+$F0: (->result: U32){
 }$
 
-F0: $a: U32, b: U32->result: U32${
+$F0: (a: U32, b: U32->result: U32){
 }$
 
 #error code or exception?
-Div: $a: U32, b: U32->result: U32)error[DivByZero]${
+$Div: (a: U32, b: U32->result: U32)error[DivByZero]{
  if(b == 0)
   error = DivByZero
  result = a / b
 }$
 
 #Function constant and variable
-sin: Sin$a: F32->result: F32${
+$sin: Sin(a: F32->result: F32){
 }$
 
 #Input a container and a function
-ForEach$container, f: $a${
+$ForEach(container, $f: (a)){
 }$
 
 #prototype
-F0$(a: U32, b: U32)->(result: U32)$$
+$F0(a: U32, b: U32)->(result: U32)$
