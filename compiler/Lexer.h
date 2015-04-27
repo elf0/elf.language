@@ -381,7 +381,7 @@ L_C_BRACE_OPEN:{
 
 L_C_BRACE_CLOSE:{
         Char *pBegin = p - 1;
-        p = (Char*)String_Skip(p, '{');
+        p = (Char*)String_Skip(p, '}');
         _u32Value = p - pBegin;
         _pChar = p;
         return tkBraceClose;
