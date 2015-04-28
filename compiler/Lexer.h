@@ -328,7 +328,7 @@ L_C_LOWER_A:
 L_C_LOWER_B:
 L_C_LOWER_C:
 L_C_LOWER_D:
-L_C_LOWER_E:
+    //L_C_LOWER_E:
 L_C_LOWER_F:
 L_C_LOWER_G:
 L_C_LOWER_H:
@@ -371,6 +371,17 @@ L_C_BRACE_CLOSE:{
         _pChar = p;
         return token.type = ttBraceClose;
     }
+
+L_C_LOWER_E:
+    label_continue = &&L_C_LOWER_E_CONTINUE;
+    goto L_C_IDENTIFIER;
+L_C_LOWER_E_CONTINUE:
+    _pChar = p;
+    if((token.str.pEnd - token.str.pBegin) == 4){
+        if(String_Equal4(token.str.pBegin, (const Char*)"else"))
+            return token.type = ttElse;
+    }
+    return token.type = ttIdentifierLower;
 
 L_C_LOWER_I:
     label_continue = &&L_C_LOWER_I_CONTINUE;
