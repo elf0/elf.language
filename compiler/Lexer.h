@@ -198,7 +198,15 @@ L_C_SHARP_RETRY:
                     U32 nEndCount = p - pEndBegin;
                     if(nEndCount != nBeginCount)
                         goto L_C_SHARP_RETRY;
-                    goto L_NEXT;
+
+                    //FIXME: Only 0x0D in source?
+                    *_pEnd = 0x0A;
+                    p = (Char*)String_SkipUntil(p, 0x0A);
+                    *_pEnd = 0;
+                    if(p++ == _pEnd)
+                        goto L_C_EOS;
+
+                    goto L_C_LINE_FEED;
                 }
             }
         }
