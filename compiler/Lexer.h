@@ -173,9 +173,18 @@ L_C_SHARP:{
         Char *pBeginBegin = p - 1;
         p = (Char*)String_Skip(p, '#');
         U32 nBeginCount = p - pBeginBegin;
+
+        //FIXME: Only 0x0D in source?
+        *_pEnd = 0x0A;
+        p = (Char*)String_SkipUntil(p, 0x0A);
+        *_pEnd = 0;
+        if(p++ == _pEnd)
+            goto L_C_EOS;
+
         if(nBeginCount > 1){
+            _pLine = p;
+            ++_nLine;
 L_C_SHARP_RETRY:
-            *_pEnd = '#';
             while(true){
                 c = *p++;
                 //FIXME: Only 0x0D in source?
@@ -184,10 +193,6 @@ L_C_SHARP_RETRY:
                     ++_nLine;
                 }
                 else if(c == '#'){
-                    *_pEnd = 0;
-                    if(p > _pEnd)
-                        goto L_C_EOS;
-
                     Char *pEndBegin = p - 1;
                     p = (Char*)String_Skip(p, '#');
                     U32 nEndCount = p - pEndBegin;
@@ -197,16 +202,8 @@ L_C_SHARP_RETRY:
                 }
             }
         }
-        else{
-            //FIXME: Only 0x0D in source?
-            *_pEnd = 0x0A;
-            p = (Char*)String_SkipUntil(p, 0x0A);
-            *_pEnd = 0;
-            if(p++ != _pEnd)
-                goto L_C_LINE_FEED;
-            else
-                goto L_C_EOS;
-        }
+        else
+            goto L_C_LINE_FEED;
     }
 L_C_DOLLAR:
     _pChar = p;
