@@ -52,19 +52,7 @@ public:
         return true;
     }
 
-    inline TokenType Read();
-
-    inline const Token &GetToken()const{
-        return _token;
-    }
-
-    inline I64 GetI64Value()const{
-        return _i64Value;
-    }
-
-    inline F64 GetF64Value()const{
-        return _f64Value;
-    }
+    inline TokenType Read(Token &token);
 
     inline U32 GetLine()const{
         return _nLine;
@@ -79,15 +67,9 @@ private:
     Char *_pChar = null;
     Char *_pLine = null;
     U32 _nLine = 1;
-    union{
-        Token _token;
-        U32 _u32Value;
-        I64 _i64Value;
-        F64 _f64Value;
-    };
 };
 
-TokenType Lexer::Read(){
+TokenType Lexer::Read(Token &token){
     static void *Labels[256]={
         //0x00
         &&L_C_EOS, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID, &&L_C_INVALID,
@@ -104,7 +86,7 @@ TokenType Lexer::Read(){
         //0 1 2 3 4 5 6 7
         &&L_C_DIGIT, &&L_C_DIGIT, &&L_C_DIGIT, &&L_C_DIGIT, &&L_C_DIGIT, &&L_C_DIGIT, &&L_C_DIGIT, &&L_C_DIGIT,
         //8 9 : ; < = > ?
-        &&L_C_DIGIT, &&L_C_DIGIT, &&L_C_INVALID, &&L_C_INVALID, &&L_C_LESS, &&L_C_EQUAL, &&L_C_GREATER, &&L_C_INVALID,
+        &&L_C_DIGIT, &&L_C_DIGIT, &&L_C_COLON, &&L_C_INVALID, &&L_C_LESS, &&L_C_EQUAL, &&L_C_GREATER, &&L_C_INVALID,
         //@ A B C D E F G
         &&L_C_INVALID, &&L_C_UPPER_A, &&L_C_UPPER_B, &&L_C_UPPER_C, &&L_C_UPPER_D, &&L_C_UPPER_E, &&L_C_UPPER_F, &&L_C_UPPER_G,
         //H I J K L M N O
@@ -148,7 +130,7 @@ L_NEXT:
     goto *Labels[c];
 L_C_EOS:
     _pChar = p - 1;
-    return tkEOS;
+    return token.type = ttEOS;
 L_C_LINE_FEED://0x0A
     _pLine = p;
     ++_nLine;
@@ -160,7 +142,7 @@ L_C_CARRIAGE_RETURN://0x0D
 L_C_QUOTATION:{
         Char *pBeginBegin = p - 1;
         p = (Char*)String_Skip(p, '"');
-        _token.pBegin = p;
+        token.strText.pBegin = p;
         U32 nBeginCount = p - pBeginBegin;
 L_C_QUOTATION_RETRY:
         *_pEnd = '"';
@@ -181,9 +163,9 @@ L_C_QUOTATION_RETRY:
                 U32 nEndCount = p - pEndBegin;
                 if(nEndCount != nBeginCount)
                     goto L_C_QUOTATION_RETRY;
-                _token.pEnd = pEndBegin;
+                token.strText.pEnd = pEndBegin;
                 _pChar = p;
-                return tkQuotation;
+                return token.type = ttStringLiteral;
             }
         }
     }
@@ -228,11 +210,11 @@ L_C_SHARP_RETRY:
     }
 L_C_DOLLAR:
     _pChar = p;
-    return tkFunctionDefine;
+    return token.type = ttFunctionDefine;
 L_C_SINGLE_QUOTATION:{
         Char *pBeginBegin = p - 1;
         p = (Char*)String_Skip(p, '\'');
-        _token.pBegin = p;
+        token.strText.pBegin = p;
         U32 nBeginCount = p - pBeginBegin;
 L_C_SINGLE_QUOTATION_RETRY:
         *_pEnd = '\'';
@@ -253,60 +235,63 @@ L_C_SINGLE_QUOTATION_RETRY:
                 U32 nEndCount = p - pEndBegin;
                 if(nEndCount != nBeginCount)
                     goto L_C_SINGLE_QUOTATION_RETRY;
-                _token.pEnd = pEndBegin;
+                token.strText.pEnd = pEndBegin;
                 _pChar = p;
-                return tkSingleQuotation;
+                return token.type = ttStringLiteral;
             }
         }
     }
 L_C_PARENTHESIS_OPEN:
     _pChar = p;
-    return tkParenthesisOpen;
+    return token.type = ttParenthesisOpen;
 L_C_PARENTHESIS_CLOSE:
     _pChar = p;
-    return tkParenthesisClose;
+    return token.type = ttParenthesisClose;
 L_C_STAR:
     _pChar = p;
-    return tkStar;
+    return token.type = ttStar;
 L_C_PLUS:
     _pChar = p;
-    return tkPlus;
+    return token.type = ttPlus;
 L_C_COMMA:
     _pChar = p;
-    return tkComma;
+    return token.type = ttComma;
 L_C_MINUS:
     _pChar = p;
-    return tkMinus;
+    return token.type = ttMinus;
 L_C_DOT:
     _pChar = p;
-    return tkDot;
+    return token.type = ttDot;
 L_C_SLASH:
     _pChar = p;
-    return tkSlash;
+    return token.type = ttSlash;
 L_C_DIGIT:{
         I64 i64Value = c - '0';
         p = (Char*)String_ParseI64(p, &i64Value);
         if(*p != '.'){
-            _i64Value = i64Value;
+            token.i64 = i64Value;
             _pChar = p;
-            return tkIntegerLiteral;
+            return token.type = ttIntegerLiteral;
         }
 
         Char *pFloat = p++;
         p = (Char*)String_SkipDigit(p);
-        _f64Value = (F64)i64Value + strtod((const char *)pFloat, 0);
+        token.f64 = (F64)i64Value + strtod((const char *)pFloat, 0);
         _pChar = p;
-        return tkFloatLiteral;
+        return token.type = ttFloatLiteral;
     }
+L_C_COLON:
+    _pChar = p;
+    return token.type = ttColon;
 L_C_LESS:
     _pChar = p;
-    return tkLess;
+    return token.type = ttLess;
 L_C_EQUAL:
     _pChar = p;
-    return tkEqual;
+    return token.type = ttEqual;
 L_C_GREATER:
     _pChar = p;
-    return tkGreater;
+    return token.type = ttGreater;
 L_C_UPPER_A:
 L_C_UPPER_B:
 L_C_UPPER_C:
@@ -337,7 +322,7 @@ L_C_UPPER_Z:
     goto L_C_IDENTIFIER;
 L_C_UPPER_IDENTIFIER_CONTINUE:
     _pChar = p;
-    return tkIdentifierUpper;
+    return token.type = ttIdentifierUpper;
 
 L_C_LOWER_A:
 L_C_LOWER_B:
@@ -369,22 +354,22 @@ L_C_LOWER_Z:
     goto L_C_IDENTIFIER;
 L_C_LOWER_IDENTIFIER_CONTINUE:
     _pChar = p;
-    return tkIdentifierLower;
+    return token.type = ttIdentifierLower;
 
 L_C_BRACE_OPEN:{
         Char *pBegin = p - 1;
         p = (Char*)String_Skip(p, '{');
-        _u32Value = p - pBegin;
+        token.u32 = p - pBegin;
         _pChar = p;
-        return tkBraceOpen;
+        return token.type = ttBraceOpen;
     }
 
 L_C_BRACE_CLOSE:{
         Char *pBegin = p - 1;
         p = (Char*)String_Skip(p, '}');
-        _u32Value = p - pBegin;
+        token.u32 = p - pBegin;
         _pChar = p;
-        return tkBraceClose;
+        return token.type = ttBraceClose;
     }
 
 L_C_LOWER_I:
@@ -392,28 +377,28 @@ L_C_LOWER_I:
     goto L_C_IDENTIFIER;
 L_C_LOWER_I_CONTINUE:
     _pChar = p;
-    if((_token.pEnd - _token.pBegin) == 2){
-        Char c1 = _token.pBegin[1];
+    if((token.strText.pEnd - token.strText.pBegin) == 2){
+        Char c1 = token.strText.pBegin[1];
         if(c1 == 'f')
-            return tkIf;
+            return token.type = ttIf;
         else if(c1 == 's')
-            return tkIs;
+            return token.type = ttIs;
         else if(c1 == 'n')
-            return tkIn;
+            return token.type = ttIn;
     }
-    return tkIdentifierLower;
+    return token.type = ttIdentifierLower;
 
 
 L_C_IDENTIFIER:
-    _token.pBegin = p - 1;
+    token.strText.pBegin = p - 1;
     while(isalnum(*p))
         ++p;
-    _token.pEnd = p;
+    token.strText.pEnd = p;
     goto *label_continue;
 
 L_C_INVALID:
     _pChar = p - 1;
-    return tkInvalid;
+    return token.type = ttInvalid;
 }
 
 #endif // LEXER_H
