@@ -142,7 +142,7 @@ L_C_CARRIAGE_RETURN://0x0D
 L_C_QUOTATION:{
         Char *pBeginBegin = p - 1;
         p = (Char*)String_Skip(p, '"');
-        token.strText.pBegin = p;
+        token.str.pBegin = p;
         U32 nBeginCount = p - pBeginBegin;
 L_C_QUOTATION_RETRY:
         *_pEnd = '"';
@@ -163,7 +163,7 @@ L_C_QUOTATION_RETRY:
                 U32 nEndCount = p - pEndBegin;
                 if(nEndCount != nBeginCount)
                     goto L_C_QUOTATION_RETRY;
-                token.strText.pEnd = pEndBegin;
+                token.str.pEnd = pEndBegin;
                 _pChar = p;
                 return token.type = ttStringLiteral;
             }
@@ -214,7 +214,7 @@ L_C_DOLLAR:
 L_C_SINGLE_QUOTATION:{
         Char *pBeginBegin = p - 1;
         p = (Char*)String_Skip(p, '\'');
-        token.strText.pBegin = p;
+        token.str.pBegin = p;
         U32 nBeginCount = p - pBeginBegin;
 L_C_SINGLE_QUOTATION_RETRY:
         *_pEnd = '\'';
@@ -235,7 +235,7 @@ L_C_SINGLE_QUOTATION_RETRY:
                 U32 nEndCount = p - pEndBegin;
                 if(nEndCount != nBeginCount)
                     goto L_C_SINGLE_QUOTATION_RETRY;
-                token.strText.pEnd = pEndBegin;
+                token.str.pEnd = pEndBegin;
                 _pChar = p;
                 return token.type = ttStringLiteral;
             }
@@ -377,8 +377,8 @@ L_C_LOWER_I:
     goto L_C_IDENTIFIER;
 L_C_LOWER_I_CONTINUE:
     _pChar = p;
-    if((token.strText.pEnd - token.strText.pBegin) == 2){
-        Char c1 = token.strText.pBegin[1];
+    if((token.str.pEnd - token.str.pBegin) == 2){
+        Char c1 = token.str.pBegin[1];
         if(c1 == 'f')
             return token.type = ttIf;
         else if(c1 == 's')
@@ -390,10 +390,10 @@ L_C_LOWER_I_CONTINUE:
 
 
 L_C_IDENTIFIER:
-    token.strText.pBegin = p - 1;
+    token.str.pBegin = p - 1;
     while(isalnum(*p))
         ++p;
-    token.strText.pEnd = p;
+    token.str.pEnd = p;
     goto *label_continue;
 
 L_C_INVALID:
