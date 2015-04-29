@@ -10,10 +10,16 @@ Location: {0.0, 0.0}
 
 #variable
 i: 0
+i = 1
 pi: 3.1415926
-hello: "Hello, World!"
+hello: "Hello, "
+hello += "World!"
 location: {0.0, 0.0}
+{x, y}: location
+location = {1.0, 1.0}
+{x, y} = location
 i32: I32{0}
+i32 = 1
 f32: F32{0.1}
 point0: Point{0, 0}
 
@@ -25,4 +31,4 @@ point1: point0
 point2: point0{1, 1}
 
 #index
-Value: index(Key: string)->string
+Value: [string]->string
