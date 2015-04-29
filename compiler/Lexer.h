@@ -170,7 +170,7 @@ L_C_QUOTATION_RETRY:
                     goto L_C_QUOTATION_RETRY;
                 token.str.pEnd = pEndBegin;
                 _pChar = p;
-                return token.type = ttStringLiteral;
+                return token.type = ttLiteralString;
             }
         }
     }
@@ -222,7 +222,7 @@ L_C_DOLLAR:
     token.location.nLine = _nLine;
     token.location.nColumn = p - _pLine;
     _pChar = p;
-    return token.type = ttFunctionDefine;
+    return token.type = ttLiteralFunction;
 L_C_SINGLE_QUOTATION:{
         token.location.nLine = _nLine;
         token.location.nColumn = p - _pLine;
@@ -252,7 +252,7 @@ L_C_SINGLE_QUOTATION_RETRY:
                     goto L_C_SINGLE_QUOTATION_RETRY;
                 token.str.pEnd = pEndBegin;
                 _pChar = p;
-                return token.type = ttStringLiteral;
+                return token.type = ttLiteralString;
             }
         }
     }
@@ -305,14 +305,14 @@ L_C_DIGIT:{
         if(*p != '.'){
             token.i64 = i64Value;
             _pChar = p;
-            return token.type = ttIntegerLiteral;
+            return token.type = ttLiteralInteger;
         }
 
         Char *pFloat = p++;
         p = (Char*)String_SkipDigit(p);
         token.f64 = (F64)i64Value + strtod((const char *)pFloat, 0);
         _pChar = p;
-        return token.type = ttFloatLiteral;
+        return token.type = ttLiteralFloat;
     }
 L_C_COLON:
     token.location.nLine = _nLine;
@@ -367,11 +367,29 @@ L_C_UPPER_Z:
     token.location.nLine = _nLine;
     token.location.nColumn = p - _pLine;
 
-    label_continue = &&L_C_UPPER_IDENTIFIER_CONTINUE;
+    label_continue = &&L_C_UPPER_CONTINUE;
     goto L_C_IDENTIFIER;
-L_C_UPPER_IDENTIFIER_CONTINUE:
-    _pChar = p;
-    return token.type = ttIdentifierUpper;
+L_C_UPPER_CONTINUE:{
+        c = *p;
+        if(c == ':'){
+            ++p;
+            _pChar = p;
+            return token.type = ttDefineConstant;
+        }
+        else if(c == '$'){
+            ++p;
+            _pChar = p;
+            return token.type = ttDefineConstantFunction;
+        }
+        else if(c == '{'){
+            ++p;
+            _pChar = p;
+            return token.type = ttDefineConstantClass;
+        }
+
+        _pChar = p;
+        return token.type = ttUpper;
+    }
 
 L_C_LOWER_A:
 L_C_LOWER_B:
@@ -402,11 +420,28 @@ L_C_LOWER_Z:
     token.location.nLine = _nLine;
     token.location.nColumn = p - _pLine;
 
-    label_continue = &&L_C_LOWER_IDENTIFIER_CONTINUE;
+    label_continue = &&L_C_LOWER_CONTINUE;
     goto L_C_IDENTIFIER;
-L_C_LOWER_IDENTIFIER_CONTINUE:
+L_C_LOWER_CONTINUE:
+    c = *p;
+    if(c == ':'){
+        ++p;
+        _pChar = p;
+        return token.type = ttDefineVariable;
+    }
+    else if(c == '$'){
+        ++p;
+        _pChar = p;
+        return token.type = ttDefineVariableFunction;
+    }
+    else if(c == '{'){
+        ++p;
+        _pChar = p;
+        return token.type = ttDefineVariableClass;
+    }
+
     _pChar = p;
-    return token.type = ttIdentifierLower;
+    return token.type = ttLower;
 
 L_C_LOWER_E:
     token.location.nLine = _nLine;
@@ -415,12 +450,14 @@ L_C_LOWER_E:
     label_continue = &&L_C_LOWER_E_CONTINUE;
     goto L_C_IDENTIFIER;
 L_C_LOWER_E_CONTINUE:
-    _pChar = p;
     if((token.str.pEnd - token.str.pBegin) == 4){
-        if(String_Equal4(token.str.pBegin, (const Char*)"else"))
+        if(String_Equal4(token.str.pBegin, (const Char*)"else")){
+            _pChar = p;
             return token.type = ttElse;
+        }
     }
-    return token.type = ttIdentifierLower;
+
+    goto L_C_LOWER_CONTINUE;
 
 L_C_LOWER_I:
     token.location.nLine = _nLine;
@@ -429,17 +466,24 @@ L_C_LOWER_I:
     label_continue = &&L_C_LOWER_I_CONTINUE;
     goto L_C_IDENTIFIER;
 L_C_LOWER_I_CONTINUE:
-    _pChar = p;
     if((token.str.pEnd - token.str.pBegin) == 2){
         Char c1 = token.str.pBegin[1];
-        if(c1 == 'f')
+        if(c1 == 'f'){
+            _pChar = p;
             return token.type = ttIf;
-        else if(c1 == 's')
+        }
+        else if(c1 == 's'){
+            _pChar = p;
             return token.type = ttIs;
-        else if(c1 == 'n')
+        }
+        else if(c1 == 'n'){
+            _pChar = p;
             return token.type = ttIn;
+        }
     }
-    return token.type = ttIdentifierLower;
+
+    goto L_C_LOWER_CONTINUE;
+
 
 L_C_LOWER_V:
     token.location.nLine = _nLine;
@@ -448,12 +492,14 @@ L_C_LOWER_V:
     label_continue = &&L_C_LOWER_V_CONTINUE;
     goto L_C_IDENTIFIER;
 L_C_LOWER_V_CONTINUE:
-    _pChar = p;
     if((token.str.pEnd - token.str.pBegin) == 7){
-        if(String_Equal6(&token.str.pBegin[1], (const Char*)"ersi", (const Char*)"on"))
+        if(String_Equal6(&token.str.pBegin[1], (const Char*)"ersi", (const Char*)"on")){
+            _pChar = p;
             return token.type = ttVersion;
+        }
     }
-    return token.type = ttIdentifierLower;
+
+    goto L_C_LOWER_CONTINUE;
 
 L_C_IDENTIFIER:
     token.str.pBegin = p - 1;
