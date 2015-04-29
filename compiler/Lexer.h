@@ -376,11 +376,6 @@ L_C_UPPER_CONTINUE:{
             _pChar = p;
             return token.type = ttDefineConstant;
         }
-        else if(c == '$'){
-            ++p;
-            _pChar = p;
-            return token.type = ttDefineConstantFunction;
-        }
         else if(c == '{'){
             ++p;
             _pChar = p;
@@ -428,11 +423,6 @@ L_C_LOWER_CONTINUE:
         ++p;
         _pChar = p;
         return token.type = ttDefineVariable;
-    }
-    else if(c == '$'){
-        ++p;
-        _pChar = p;
-        return token.type = ttDefineVariableFunction;
     }
     else if(c == '{'){
         ++p;
