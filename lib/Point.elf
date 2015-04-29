@@ -11,6 +11,11 @@ Point<T>{
     .y = y
   }
 
+  get(x: T, y: T){
+    x = .x
+    y = .y
+  }
+
   set(x: T, y: T){
     .x = x
     .y = y
