@@ -394,7 +394,7 @@ L_C_LOWER_R:
 L_C_LOWER_S:
 L_C_LOWER_T:
 L_C_LOWER_U:
-L_C_LOWER_V:
+    //L_C_LOWER_V:
 L_C_LOWER_W:
 L_C_LOWER_X:
 L_C_LOWER_Y:
@@ -407,28 +407,6 @@ L_C_LOWER_Z:
 L_C_LOWER_IDENTIFIER_CONTINUE:
     _pChar = p;
     return token.type = ttIdentifierLower;
-
-L_C_BRACE_OPEN:{
-        token.location.nLine = _nLine;
-        token.location.nColumn = p - _pLine;
-
-        Char *pBegin = p - 1;
-        p = (Char*)String_Skip(p, '{');
-        token.u32 = p - pBegin;
-        _pChar = p;
-        return token.type = ttBraceOpen;
-    }
-
-L_C_BRACE_CLOSE:{
-        token.location.nLine = _nLine;
-        token.location.nColumn = p - _pLine;
-
-        Char *pBegin = p - 1;
-        p = (Char*)String_Skip(p, '}');
-        token.u32 = p - pBegin;
-        _pChar = p;
-        return token.type = ttBraceClose;
-    }
 
 L_C_LOWER_E:
     token.location.nLine = _nLine;
@@ -463,6 +441,19 @@ L_C_LOWER_I_CONTINUE:
     }
     return token.type = ttIdentifierLower;
 
+L_C_LOWER_V:
+    token.location.nLine = _nLine;
+    token.location.nColumn = p - _pLine;
+
+    label_continue = &&L_C_LOWER_V_CONTINUE;
+    goto L_C_IDENTIFIER;
+L_C_LOWER_V_CONTINUE:
+    _pChar = p;
+    if((token.str.pEnd - token.str.pBegin) == 7){
+        if(String_Equal6(&token.str.pBegin[1], (const Char*)"ersi", (const Char*)"on"))
+            return token.type = ttVersion;
+    }
+    return token.type = ttIdentifierLower;
 
 L_C_IDENTIFIER:
     token.str.pBegin = p - 1;
@@ -470,6 +461,28 @@ L_C_IDENTIFIER:
         ++p;
     token.str.pEnd = p;
     goto *label_continue;
+
+L_C_BRACE_OPEN:{
+        token.location.nLine = _nLine;
+        token.location.nColumn = p - _pLine;
+
+        Char *pBegin = p - 1;
+        p = (Char*)String_Skip(p, '{');
+        token.u32 = p - pBegin;
+        _pChar = p;
+        return token.type = ttBraceOpen;
+    }
+
+L_C_BRACE_CLOSE:{
+        token.location.nLine = _nLine;
+        token.location.nColumn = p - _pLine;
+
+        Char *pBegin = p - 1;
+        p = (Char*)String_Skip(p, '}');
+        token.u32 = p - pBegin;
+        _pChar = p;
+        return token.type = ttBraceClose;
+    }
 
 L_C_INVALID:
     token.location.nLine = _nLine;
