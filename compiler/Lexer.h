@@ -147,7 +147,7 @@ L_C_QUOTATION:{
 
         Char *pBeginBegin = p - 1;
         p = (Char*)String_Skip(p, '"');
-        token.str.pBegin = p;
+        token.strValue.pBegin = p;
         U32 nBeginCount = p - pBeginBegin;
 L_C_QUOTATION_RETRY:
         *_pEnd = '"';
@@ -168,7 +168,7 @@ L_C_QUOTATION_RETRY:
                 U32 nEndCount = p - pEndBegin;
                 if(nEndCount != nBeginCount)
                     goto L_C_QUOTATION_RETRY;
-                token.str.pEnd = pEndBegin;
+                token.strValue.pEnd = pEndBegin;
                 _pChar = p;
                 return token.type = ttLiteralString;
             }
@@ -229,7 +229,7 @@ L_C_SINGLE_QUOTATION:{
 
         Char *pBeginBegin = p - 1;
         p = (Char*)String_Skip(p, '\'');
-        token.str.pBegin = p;
+        token.strValue.pBegin = p;
         U32 nBeginCount = p - pBeginBegin;
 L_C_SINGLE_QUOTATION_RETRY:
         *_pEnd = '\'';
@@ -250,7 +250,7 @@ L_C_SINGLE_QUOTATION_RETRY:
                 U32 nEndCount = p - pEndBegin;
                 if(nEndCount != nBeginCount)
                     goto L_C_SINGLE_QUOTATION_RETRY;
-                token.str.pEnd = pEndBegin;
+                token.strValue.pEnd = pEndBegin;
                 _pChar = p;
                 return token.type = ttLiteralString;
             }
@@ -303,14 +303,14 @@ L_C_DIGIT:{
         I64 i64Value = c - '0';
         p = (Char*)String_ParseI64(p, &i64Value);
         if(*p != '.'){
-            token.i64 = i64Value;
+            token.i64Value = i64Value;
             _pChar = p;
             return token.type = ttLiteralInteger;
         }
 
         Char *pFloat = p++;
         p = (Char*)String_SkipDigit(p);
-        token.f64 = (F64)i64Value + strtod((const char *)pFloat, 0);
+        token.f64Value = (F64)i64Value + strtod((const char *)pFloat, 0);
         _pChar = p;
         return token.type = ttLiteralFloat;
     }
@@ -440,8 +440,8 @@ L_C_LOWER_E:
     label_continue = &&L_C_LOWER_E_CONTINUE;
     goto L_C_IDENTIFIER;
 L_C_LOWER_E_CONTINUE:
-    if((token.str.pEnd - token.str.pBegin) == 4){
-        if(String_Equal4(token.str.pBegin, (const Char*)"else")){
+    if((token.strValue.pEnd - token.strValue.pBegin) == 4){
+        if(String_Equal4(token.strValue.pBegin, (const Char*)"else")){
             _pChar = p;
             return token.type = ttElse;
         }
@@ -456,8 +456,8 @@ L_C_LOWER_I:
     label_continue = &&L_C_LOWER_I_CONTINUE;
     goto L_C_IDENTIFIER;
 L_C_LOWER_I_CONTINUE:
-    if((token.str.pEnd - token.str.pBegin) == 2){
-        Char c1 = token.str.pBegin[1];
+    if((token.strValue.pEnd - token.strValue.pBegin) == 2){
+        Char c1 = token.strValue.pBegin[1];
         if(c1 == 'f'){
             _pChar = p;
             return token.type = ttIf;
@@ -482,8 +482,8 @@ L_C_LOWER_V:
     label_continue = &&L_C_LOWER_V_CONTINUE;
     goto L_C_IDENTIFIER;
 L_C_LOWER_V_CONTINUE:
-    if((token.str.pEnd - token.str.pBegin) == 7){
-        if(String_Equal6(&token.str.pBegin[1], (const Char*)"ersi", (const Char*)"on")){
+    if((token.strValue.pEnd - token.strValue.pBegin) == 7){
+        if(String_Equal6(&token.strValue.pBegin[1], (const Char*)"ersi", (const Char*)"on")){
             _pChar = p;
             return token.type = ttVersion;
         }
@@ -492,10 +492,10 @@ L_C_LOWER_V_CONTINUE:
     goto L_C_LOWER_CONTINUE;
 
 L_C_IDENTIFIER:
-    token.str.pBegin = p - 1;
+    token.strValue.pBegin = p - 1;
     while(isalnum(*p))
         ++p;
-    token.str.pEnd = p;
+    token.strValue.pEnd = p;
     goto *label_continue;
 
 L_C_BRACE_OPEN:{
@@ -504,7 +504,7 @@ L_C_BRACE_OPEN:{
 
         Char *pBegin = p - 1;
         p = (Char*)String_Skip(p, '{');
-        token.u32 = p - pBegin;
+        token.u32Value = p - pBegin;
         _pChar = p;
         return token.type = ttBraceOpen;
     }
@@ -515,7 +515,7 @@ L_C_BRACE_CLOSE:{
 
         Char *pBegin = p - 1;
         p = (Char*)String_Skip(p, '}');
-        token.u32 = p - pBegin;
+        token.u32Value = p - pBegin;
         _pChar = p;
         return token.type = ttBraceClose;
     }
@@ -529,5 +529,4 @@ L_C_INVALID:
 }
 
 #endif // LEXER_H
-
 
