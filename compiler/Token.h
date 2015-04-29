@@ -6,7 +6,6 @@
 //EMail: elf198012@gmail.com
 
 #include "Type.h"
-#include "Location.h"
 
 enum TokenType{
     ttInvalid,
@@ -71,4 +70,5 @@ typedef struct{
 }Token;
 
 #endif // TOKEN_H
+
 
