@@ -53,21 +53,21 @@ public:
     }
 
     inline TokenType Read(Token &token);
-
-    inline U32 GetLine()const{
-        return _nLine;
-    }
-
-    inline U32 GetColumn()const{
-        return _pChar - _pLine + 1;
-    }
 private:
+    inline TokenType MakeToken(Token &token, TokenType type, U16 nLine, U16 nColumn);
     Char *_pBegin = null;
     Char *_pEnd = null;
     Char *_pChar = null;
     Char *_pLine = null;
     U32 _nLine = 1;
 };
+
+TokenType Lexer::MakeToken(Token &token, TokenType type, U16 nLine, U16 nColumn){
+    token.location.nLine = nLine;
+    token.location.nColumn = nColumn;
+    token.type = type;
+    return type;
+}
 
 TokenType Lexer::Read(Token &token){
     static void *Labels[256]={
@@ -129,6 +129,8 @@ L_NEXT:
     c = *p++;
     goto *Labels[c];
 L_C_EOS:
+    token.location.nLine = _nLine;
+    token.location.nColumn = p - _pLine;
     _pChar = p - 1;
     return token.type = ttEOS;
 L_C_LINE_FEED://0x0A
@@ -140,6 +142,9 @@ L_C_CARRIAGE_RETURN://0x0D
         ++p;
     goto L_C_LINE_FEED;
 L_C_QUOTATION:{
+        token.location.nLine = _nLine;
+        token.location.nColumn = p - _pLine;
+
         Char *pBeginBegin = p - 1;
         p = (Char*)String_Skip(p, '"');
         token.str.pBegin = p;
@@ -214,9 +219,14 @@ L_C_SHARP_RETRY:
             goto L_C_LINE_FEED;
     }
 L_C_DOLLAR:
+    token.location.nLine = _nLine;
+    token.location.nColumn = p - _pLine;
     _pChar = p;
     return token.type = ttFunctionDefine;
 L_C_SINGLE_QUOTATION:{
+        token.location.nLine = _nLine;
+        token.location.nColumn = p - _pLine;
+
         Char *pBeginBegin = p - 1;
         p = (Char*)String_Skip(p, '\'');
         token.str.pBegin = p;
@@ -247,30 +257,49 @@ L_C_SINGLE_QUOTATION_RETRY:
         }
     }
 L_C_PARENTHESIS_OPEN:
+    token.location.nLine = _nLine;
+    token.location.nColumn = p - _pLine;
     _pChar = p;
     return token.type = ttParenthesisOpen;
 L_C_PARENTHESIS_CLOSE:
+    token.location.nLine = _nLine;
+    token.location.nColumn = p - _pLine;
     _pChar = p;
     return token.type = ttParenthesisClose;
 L_C_STAR:
+    token.location.nLine = _nLine;
+    token.location.nColumn = p - _pLine;
     _pChar = p;
     return token.type = ttStar;
 L_C_PLUS:
+    token.location.nLine = _nLine;
+    token.location.nColumn = p - _pLine;
     _pChar = p;
     return token.type = ttPlus;
 L_C_COMMA:
+    token.location.nLine = _nLine;
+    token.location.nColumn = p - _pLine;
     _pChar = p;
     return token.type = ttComma;
 L_C_MINUS:
+    token.location.nLine = _nLine;
+    token.location.nColumn = p - _pLine;
     _pChar = p;
     return token.type = ttMinus;
 L_C_DOT:
+    token.location.nLine = _nLine;
+    token.location.nColumn = p - _pLine;
     _pChar = p;
     return token.type = ttDot;
 L_C_SLASH:
+    token.location.nLine = _nLine;
+    token.location.nColumn = p - _pLine;
     _pChar = p;
     return token.type = ttSlash;
 L_C_DIGIT:{
+        token.location.nLine = _nLine;
+        token.location.nColumn = p - _pLine;
+
         I64 i64Value = c - '0';
         p = (Char*)String_ParseI64(p, &i64Value);
         if(*p != '.'){
@@ -286,15 +315,27 @@ L_C_DIGIT:{
         return token.type = ttFloatLiteral;
     }
 L_C_COLON:
+    token.location.nLine = _nLine;
+    token.location.nColumn = p - _pLine;
+
     _pChar = p;
     return token.type = ttColon;
 L_C_LESS:
+    token.location.nLine = _nLine;
+    token.location.nColumn = p - _pLine;
+
     _pChar = p;
     return token.type = ttLess;
 L_C_EQUAL:
+    token.location.nLine = _nLine;
+    token.location.nColumn = p - _pLine;
+
     _pChar = p;
     return token.type = ttEqual;
 L_C_GREATER:
+    token.location.nLine = _nLine;
+    token.location.nColumn = p - _pLine;
+
     _pChar = p;
     return token.type = ttGreater;
 L_C_UPPER_A:
@@ -323,6 +364,9 @@ L_C_UPPER_W:
 L_C_UPPER_X:
 L_C_UPPER_Y:
 L_C_UPPER_Z:
+    token.location.nLine = _nLine;
+    token.location.nColumn = p - _pLine;
+
     label_continue = &&L_C_UPPER_IDENTIFIER_CONTINUE;
     goto L_C_IDENTIFIER;
 L_C_UPPER_IDENTIFIER_CONTINUE:
@@ -355,6 +399,9 @@ L_C_LOWER_W:
 L_C_LOWER_X:
 L_C_LOWER_Y:
 L_C_LOWER_Z:
+    token.location.nLine = _nLine;
+    token.location.nColumn = p - _pLine;
+
     label_continue = &&L_C_LOWER_IDENTIFIER_CONTINUE;
     goto L_C_IDENTIFIER;
 L_C_LOWER_IDENTIFIER_CONTINUE:
@@ -362,6 +409,9 @@ L_C_LOWER_IDENTIFIER_CONTINUE:
     return token.type = ttIdentifierLower;
 
 L_C_BRACE_OPEN:{
+        token.location.nLine = _nLine;
+        token.location.nColumn = p - _pLine;
+
         Char *pBegin = p - 1;
         p = (Char*)String_Skip(p, '{');
         token.u32 = p - pBegin;
@@ -370,6 +420,9 @@ L_C_BRACE_OPEN:{
     }
 
 L_C_BRACE_CLOSE:{
+        token.location.nLine = _nLine;
+        token.location.nColumn = p - _pLine;
+
         Char *pBegin = p - 1;
         p = (Char*)String_Skip(p, '}');
         token.u32 = p - pBegin;
@@ -378,6 +431,9 @@ L_C_BRACE_CLOSE:{
     }
 
 L_C_LOWER_E:
+    token.location.nLine = _nLine;
+    token.location.nColumn = p - _pLine;
+
     label_continue = &&L_C_LOWER_E_CONTINUE;
     goto L_C_IDENTIFIER;
 L_C_LOWER_E_CONTINUE:
@@ -389,6 +445,9 @@ L_C_LOWER_E_CONTINUE:
     return token.type = ttIdentifierLower;
 
 L_C_LOWER_I:
+    token.location.nLine = _nLine;
+    token.location.nColumn = p - _pLine;
+
     label_continue = &&L_C_LOWER_I_CONTINUE;
     goto L_C_IDENTIFIER;
 L_C_LOWER_I_CONTINUE:
@@ -413,6 +472,9 @@ L_C_IDENTIFIER:
     goto *label_continue;
 
 L_C_INVALID:
+    token.location.nLine = _nLine;
+    token.location.nColumn = p - _pLine;
+
     _pChar = p - 1;
     return token.type = ttInvalid;
 }
