@@ -161,7 +161,7 @@ L_C_QUOTATION_RETRY:
             else if(c == '"'){
                 *_pEnd = 0;
                 if(p > _pEnd)
-                    goto L_C_EOS;//FIXME: Error, Expect end
+                    goto L_C_EOS;
 
                 Char *pEndBegin = p - 1;
                 p = (Char*)String_Skip(p, '"');
@@ -243,7 +243,7 @@ L_C_SINGLE_QUOTATION_RETRY:
             else if(c == '\''){
                 *_pEnd = 0;
                 if(p > _pEnd)
-                    goto L_C_EOS;//FIXME: Error, Expect end
+                    goto L_C_EOS;
 
                 Char *pEndBegin = p - 1;
                 p = (Char*)String_Skip(p, '\'');
