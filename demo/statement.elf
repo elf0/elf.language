@@ -14,4 +14,9 @@ $F1(a: U32, b: U32)->(c: U32){
 $LOOP0(){
  loop 3 times{
  }
+
+ for x in interval(0, 100],{
+  print(x)
+ }
+
 }
