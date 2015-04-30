@@ -4,11 +4,11 @@ F0: ${
 }
 
 #Only input
-set F0(a: U32, b: U32){
+F0: set(a: U32, b: U32){
 }
 
 #Only Output
-get F0(result: U32){
+F0: get(result: U32){
 }
 
 F0: $(a: U32, b: U32->result: U32){
@@ -20,11 +20,11 @@ f0: ${
 }
 
 #Only input
-set f0: $(a: U32, b: U32){
+f0: set$(a: U32, b: U32){
 }
 
 #Only Output
-get f0: (result: U32){
+f0: get(result: U32){
 }
 
 f0: $(a: U32, b: U32->result: U32){

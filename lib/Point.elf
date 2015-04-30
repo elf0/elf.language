@@ -6,46 +6,46 @@ version: 0
 root: elf
 
 Point<T>{
-  new(x: T, y: T){
+  $new(x: T, y: T){
     .x = x
     .y = y
   }
 
-  get(x: T, y: T){
+  $->(x: T, y: T){
     x = .x
     y = .y
   }
 
-  set(x: T, y: T){
+  $(x: T, y: T){
     .x = x
     .y = y
   }
 
-  get X: T{
+  X: $->T{
     return .x
   }
 
-  get Y: T{
+  Y: $->T{
     return .y
   }
 
-  set X: T{
+  X: $T{
     .x = value
   }
 
-  set Y: T{
+  Y: $T{
     .y = value
   }
 
-  set OffsetX: T{
+  OffsetX: $(value: T){
     .x += value
   }
 
-  set OffsetY: T{
+  OffsetY: $(value: T){
     .y += value
   }
 
-  set Offset: (x: T, y: T){
+  Offset: $(x: T, y: T){
     .x += x
     .y += y
   }

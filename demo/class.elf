@@ -5,6 +5,14 @@ root: demo
 Int{
  new(value: String){
  }
+
+ get I64{
+  value = .value;
+ }
+
+ set I64{
+  .value = value;
+ }
 private:
  value: I64
 }
