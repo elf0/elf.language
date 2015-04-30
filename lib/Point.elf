@@ -37,11 +37,11 @@ Point<T>{
     .y = value
   }
 
-  OffsetX: $(value: T){
+  OffsetX: $T{
     .x += value
   }
 
-  OffsetY: $(value: T){
+  OffsetY: $T{
     .y += value
   }
 
