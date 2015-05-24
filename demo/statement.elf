@@ -20,3 +20,6 @@ $LOOP0(){
  }
 
 }
+
+p3: Point3
+p2: p3 as Point
