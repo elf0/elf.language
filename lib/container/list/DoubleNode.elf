@@ -1,0 +1,56 @@
+elf: 0
+
+$: struct{
+  next: DoubleNode;
+  prev: DoubleNode;
+};
+
+LinkPrev(prev: DoubleNode){
+  $prev = prev;
+  prev.next = $;
+}
+
+LinkNext(next: DoubleNode){
+  $next = next;
+  next.prev = $;
+}
+
+Link(prev: DoubleNode, next: DoubleNode){
+  LinkPrev(prev);
+  LinkNext(next);
+}
+
+Unlink{
+  $prev.next = $next;
+  $next.prev = $prev;
+}
+
+Reset{
+  $prev = $next = $;
+}
+
+Alone: is{
+  return $next == $;
+}
+
+Alone: is not{
+  return $next != $;
+}
+
+MoveBuddiesTo(target: DoubleNode){
+  $next.LinkPrev(target.prev);
+  $prev.LinkNext(target);
+  Reset();
+}
+
+MoveBuddiesToFront(target: DoubleNode){
+  $next.LinkPrev(target);
+  $prev.LinkNext(target.next);
+  Reset();
+}
+
+SwapBuddies(pNode: DoubleNode, target: DoubleNode){
+  tmp: DoubleNode = $;
+  $ = target;
+  target = tmp;
+}
