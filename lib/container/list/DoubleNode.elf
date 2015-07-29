@@ -1,6 +1,6 @@
 elf: 0
 
-$: struct{
+${
   next: DoubleNode;
   prev: DoubleNode;
 };
