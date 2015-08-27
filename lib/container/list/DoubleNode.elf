@@ -3,7 +3,7 @@ elf: 0
 ${
   next: DoubleNode;
   prev: DoubleNode;
-};
+}
 
 LinkPrev(prev: DoubleNode){
   $prev = prev;
