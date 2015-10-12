@@ -21,7 +21,7 @@ $LOOP0(){
 
 }
 
-p3: Point3
+p3: Point3(0,0,0)
 p2: p3 as Point
 Point*(p3).x
 

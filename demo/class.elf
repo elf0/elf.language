@@ -6,12 +6,16 @@ Int{
  new(value: String){
  }
 
- get I64{
+ ?I64{
   value = .value;
  }
 
- set I64{
+ !I64{
   .value = value;
+ }
+
+ !String{
+  .value = Parse(value);
  }
 private:
  value: I64
