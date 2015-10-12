@@ -6,7 +6,7 @@ Int{
  new(value: String){
  }
 
- ?I64{
+ ->I64{
   value = .value;
  }
 
@@ -33,7 +33,7 @@ C{
 
 Dog{
 ;propery
- ?Name: String{
+ Name->String{
   return .strName
  }
 
