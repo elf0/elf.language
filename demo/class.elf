@@ -33,35 +33,35 @@ C{
 
 Dog{
 ;propery
- get Name: String{
+ ?Name: String{
   return .strName
  }
 
- set Name: String{
+ !Name: String{
   .strName = value
  }
 
  strName: String
 
 ;"is" method
- is Animal{
+ ?is Animal{
   return true
  }
 }
 
 ;index
 Map{
- index(Key: String)->(value: String){
+ ?(Key: String)->(value: String){
  }
 
- Key: index(i: U32)->(value: String){
+ ?Key(i: U32)->(value: String){
  }
 
- Value: index(i: U32)->(value: String){
+ ?Value(i: U32)->(value: String){
  }
 }
 
 HumanDB{
- Persons: index(strFirstName: String, strLastName: String)->IdSet{
+ ?Persons(strFirstName: String, strLastName: String)->IdSet{
  }
 }
