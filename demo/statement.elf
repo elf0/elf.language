@@ -18,7 +18,11 @@ $Shift(value: I32)->(result: I32){
 }
 
 $Compare(left: I32, right: I32)->(result: I2){
-  result: left<=>right? -1, 0, 1
+  result: left < right? 1, 0
+  result: left <= right? 1, 0
+  result: left > right? 1, 0
+  result: left >= right? 1, 0
+  result: left <=> right? -1, 0, 1
 }
 
 
