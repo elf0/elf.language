@@ -8,7 +8,7 @@ $F0(a: U32, b: U32){
 }
 
 \Only Output
-$F0->U32{
+$F0->result: U32{
 }
 
 $F0->r0: U32, r1: U32{
@@ -41,7 +41,7 @@ $Div(a: U32, b: U32)->(result: U32)error[DivByZero]{
 }
 
 \Input a container and a function
-$ForEach(container, $f(element)){
+$ForEach(container, f: $(element)){
 }
 
 \prototype
