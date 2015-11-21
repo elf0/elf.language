@@ -11,7 +11,7 @@ $F1(a: U32, b: U32)->(c: U32){
  return 0
 }
 
-$Compare(left: i32, right: i32)->result: i2{
+$Compare(left: I32, right: I32)->(result: I2){
   result: left<=>right? -1, 0, 1
 }
 
