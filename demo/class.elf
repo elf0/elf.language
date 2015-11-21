@@ -37,7 +37,8 @@ Dog{
   return .strName
  }
 
- !Name: String{
+ Name(String){
+# !Name: String{
   .strName = value
  }
 

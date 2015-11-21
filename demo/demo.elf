@@ -2,13 +2,14 @@ version: 0
 
 root: elf.demo
 
-#constant
+\constant
 I: 0
 Pi: 3.1415926
 Hello: "Hello, World!"
 Location: {0.0, 0.0}
 
-#variable
+\variable
+#0: 0
 i: 0
 i = 1
 pi: 3.1415926
@@ -23,12 +24,12 @@ i32 = 1
 f32: F32(0.1)
 point0: Point(0, 0)
 
-#reference point0
+\reference point0
 point1: point0
-#"point1 is point0" equals true
+\"point1 is point0" equals true
 
-#Use type of point0, Assign new value
+\Use type of point0, Assign new value
 point2: point0(1, 1)
 
-#index
+\index
 Value: [string]->string

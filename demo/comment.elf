@@ -1,11 +1,11 @@
-#This is a line comment!
+\This is a line comment!
 
-##
+\\
 This is a block comment!
-##tail comment will be skip too.
+\\tail comment will be skip too.
 
-########
-##
+\\\\\\\\
+\\
 This is a nested block comment!
-##
-########tail comment will be skip too.
+\\
+\\\\\\\\tail comment will be skip too.
