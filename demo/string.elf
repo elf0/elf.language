@@ -19,7 +19,7 @@ text7: ""Hell"o",
 text8: """""""""""""Hell"o",
  'w'orld!"""""""""""""
 
-text9 = text1 + text2
+text9: text1 + text2
 
 i: 8
-text10 = text1 + String(i);
+text10: text1 + String(i);

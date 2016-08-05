@@ -7,15 +7,15 @@ Int{
  }
 
  ->I64{
-  value = .value;
+  value: .value;
  }
 
  !I64{
-  .value = value;
+  .value: value;
  }
 
  !String{
-  .value = Parse(value);
+  .value: Parse(value);
  }
 private:
  value: I64
@@ -39,7 +39,7 @@ Dog{
 
  Name(String){
 # !Name: String{
-  .strName = value
+  .strName: value
  }
 
  strName: String

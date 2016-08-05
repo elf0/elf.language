@@ -1,48 +1,47 @@
-\Function constant.
-\No input and output
-$F0{
-}
+:#Function constant.
+:#No input and output
+$F0:
+:
+:#Only input
+$F0: a: U32, b: U32
+:
+:
+:#Only Output
+$F0: ->(result: U32){
+:
+:
+:
+$F0: ->(r0: U32, r1: U32){
+:
+:
+$F0: (a: U32, b: U32)->(result: U32)
+:
 
-\Only input
-$F0(a: U32, b: U32){
-}
-
-\Only Output
-$F0->result: U32{
-}
-
-$F0->r0: U32, r1: U32{
-}
-
-$F0(a: U32, b: U32)->result: U32{
-}
-
-\Function variable.
-\No input and output
-f0: ${
-}
-
-\Only input
-f0: $(a: U32, b: U32){
-}
-
-\Only Output
-f0: $->U32{
-}
-
-f0: $(a: U32, b: U32)->result: U32{
-}
-
-\error code or exception?
-$Div(a: U32, b: U32)->(result: U32)error[DivByZero]{
- if(b == 0)
-  error = DivByZero
- result = a / b
-}
-
-\Input a container and a function
-$ForEach(container, f: $(element)){
-}
-
-\prototype
+:#Function variable.
+:#No input and output
+f0: $
+:
+:# Only input
+f0: $(a: U32, b: U32)
+:
+:
+:#Only Output
+f0: $->U32:
+:
+:
+f0: $(a: U32, b: U32)->(result: U32)
+:
+:
+:#error code or exception?
+$Div: (a: U32, b: U32)->(result: U32)error[DivByZero]
+: if(b = 0)
+::  error: DivByZero
+: result: a / b
+:
+:
+:#Input a container and a function
+$ForEach: (container, f: $(element))
+:
+:
+:#prototype
 F0: $(a: U32, b: U32)->result: U32

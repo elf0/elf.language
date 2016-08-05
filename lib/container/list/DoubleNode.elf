@@ -1,56 +1,64 @@
 elf: 0
 
-${
-  next: DoubleNode;
-  prev: DoubleNode;
+#{
+  next: #
+  prev: #
 }
 
-LinkPrev(prev: DoubleNode){
-  $prev = prev;
-  prev.next = $;
+$Next: #{
+ return .next
 }
 
-LinkNext(next: DoubleNode){
-  $next = next;
-  next.prev = $;
+$set Next(value: #){
+ .next = value
 }
 
-Link(prev: DoubleNode, next: DoubleNode){
-  LinkPrev(prev);
-  LinkNext(next);
+$Prev: #{
+ return .prev
 }
 
-Unlink{
-  $prev.next = $next;
-  $next.prev = $prev;
+$LinkPrev(prev: #){
+  .prev: prev
+  prev.next: .
 }
 
-Reset{
-  $prev = $next = $;
+$LinkNext(next: #){
+  .next: next
+  next.prev: .
 }
 
-Alone: is{
-  return $next == $;
+$link(prev: #, next: #){
+  .LinkPrev(prev)
+  .LinkNext(next)
 }
 
-Alone: is not{
-  return $next != $;
+$unlink{
+  .prev.next: .next
+  .next.prev: .prev
 }
 
-MoveBuddiesTo(target: DoubleNode){
-  $next.LinkPrev(target.prev);
-  $prev.LinkNext(target);
-  Reset();
+$reset{
+  .prev: .next: .
 }
 
-MoveBuddiesToFront(target: DoubleNode){
-  $next.LinkPrev(target);
-  $prev.LinkNext(target.next);
-  Reset();
+$is alone{
+  return $next == .
 }
 
-SwapBuddies(pNode: DoubleNode, target: DoubleNode){
-  tmp: DoubleNode = $;
-  $ = target;
-  target = tmp;
+$MoveBuddiesTo(target: #){
+  .next.LinkPrev(target.prev)
+  .prev.LinkNext(target)
+  .reset()
+}
+
+$MoveBuddiesToFront(target: #){
+  .next.LinkPrev(target)
+  .prev.LinkNext(target.next)
+  .reset()
+}
+
+$SwapBuddies(pNode: #, target: #){
+  tmp: .
+  .: target
+  target: tmp
 }
