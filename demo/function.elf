@@ -16,7 +16,7 @@ $F0: ->(r0: U32, r1: U32){
 :
 $F0: (a: U32, b: U32)->(result: U32)
 :
-
+:
 :#Function variable.
 :#No input and output
 f0: $
@@ -45,3 +45,4 @@ $ForEach: (container, f: $(element))
 :
 :#prototype
 F0: $(a: U32, b: U32)->result: U32
+:

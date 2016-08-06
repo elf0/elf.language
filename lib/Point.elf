@@ -1,55 +1,45 @@
 version: 0
-//License: Public Domain
-//Author: elf
-//EMail: elf198012@gmail.com
-
-Point<T>{
-  $new(x: T, y: T){
-    .x = x
-    .y = y
-  }
-
-  $->(x: T, y: T){
-    x = .x
-    y = .y
-  }
-
-  $(x: T, y: T){
-    .x = x
-    .y = y
-  }
-
-  X: $->T{
-    return .x
-  }
-
-  Y: $->T{
-    return .y
-  }
-
-  X: $T{
-    .x = value
-  }
-
-  Y: $T{
-    .y = value
-  }
-
-  OffsetX: $T{
-    .x += value
-  }
-
-  OffsetY: $T{
-    .y += value
-  }
-
-  Offset: $(x: T, y: T){
-    .x += x
-    .y += y
-  }
-
-private:
-  x: T
-  y: T
-}
-
+#:
+: License: Public Domain
+: Author: elf
+: EMail: elf@elf0.org
+:
+Point: <T>
+: $new(x: T, y: T)
+:: .x = x
+:: .y = y
+:
+: $->(x: T, y: T)
+:: x = .x
+:: y = .y
+:
+: $(x: T, y: T)
+:: .x = x
+:: .y = y
+:
+: X: $->T
+:: return .x
+:
+: Y: $->T
+:: return .y
+:
+: X: $T
+:: .x = value
+:
+: Y: $T
+:: .y = value
+:
+: OffsetX: $T
+:: .x += value
+:
+: OffsetY: $T
+:: .y += value
+:
+: Offset: $(x: T, y: T)
+:: .x += x
+:: .y += y
+:
+: private:
+: x: T
+: y: T
+:
