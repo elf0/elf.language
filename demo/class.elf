@@ -3,10 +3,10 @@ version: 0
 root: demo
 
 Int{
- new(value: String){
+ new: $(value: String){
  }
 
- ->I64{
+ $->I64{
   value: .value;
  }
 
