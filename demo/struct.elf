@@ -1,0 +1,9 @@
+Point: struct{
+ x: F32
+ y: F32
+}
+
+Add: .$ (r: Point) {
+ .x += r.x
+ .y += r.y
+}
