@@ -2,46 +2,39 @@ version: 0
 #:
   License: Public Domain
   Author: elf
-  EMail: elf@elf0.org
+  EMail: elf@iamelf.com
  
-Point: <T>
-  new $ x, y
-   .x = x
-   .y = y
+Point:
+  x
+  y
+
+[x, y]
+  .x = x
+  .y = y
+
+: x, y
+  x = .x
+  y = .y
  
-  $ : x, y
-   x = .x
-   y = .y
+X:
+  return .x
+
+Y:
+  return .y
  
-  $ x, y {
-   .x = x
-   .y = y
-  }
+X[x]
+  .x = x
  
-  X $>
-   return .x
+Y[y]
+  .y = y
  
-  Y $>
-   return .y
+OffsetX[x]
+  .x += x
  
-  X $ value
-   .x = value
+OffsetY[y]
+  .y += y
  
-  Y $ value
-   .y = value
- 
-  OffsetX $ value
-   .x += value
- 
-  OffsetY $ value
-   .y += value
- 
-  Offset $ x, y {
-   .x += x
-   .y += y
-  }
- 
-  private:
-  x T
-  y T
- 
+Offset[x, y]
+  .x += x
+  .y += y
+

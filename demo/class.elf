@@ -2,23 +2,22 @@ version: 0
 
 root: demo
 
-Int{
- value
-}
-, Int: value {
- .value: value
-}
-, $->I64{
- value: .value;
+Int64{
+ value: I64
+
+[value] {
+ .value = value
 }
 
-, !I64{
- .value: value;
+[value] {
+ .value.Parse[value]
 }
 
-, !String{
- .value: Parse value ;
+:I64{
+ return .value
 }
+
+}Int64
 
 
 B{
@@ -33,12 +32,12 @@ C{
 
 Dog{
 ;propery
- Name{
+ Name: S {
   return .strName
  }
 
- Name $ value {
-  .strName: value
+ Name[value] {
+  .strName = value
  }
 
  strName
