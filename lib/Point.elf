@@ -16,11 +16,11 @@ Point:
   x = .x
   y = .y
  
-X:
-  return .x
+X: x
+  x = .x
 
-Y:
-  return .y
+Y: y
+  y = .y
  
 X[x]
   .x = x
