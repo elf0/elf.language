@@ -3,66 +3,65 @@ version: 0
 root: demo
 
 Int{
- new: $(value: String){
- }
-
- $->I64{
-  value: .value;
- }
-
- !I64{
-  .value: value;
- }
-
- !String{
-  .value: Parse(value);
- }
-private:
- value: I64
+ value
+}
+, Int: value {
+ .value: value
+}
+, $->I64{
+ value: .value;
 }
 
+, !I64{
+ .value: value;
+}
+
+, !String{
+ .value: Parse value ;
+}
+
+
 B{
- b: i32
+ b
 }
 
 C{
- A; extract A
- B
- c: i32
+ A # extract A
+ B # extract B
+ c # field c
 }
 
 Dog{
 ;propery
- Name->String{
+ Name{
   return .strName
  }
 
- Name(String){
-# !Name: String{
+ Name $ value {
   .strName: value
  }
 
- strName: String
+ strName
 
 ;"is" method
- ?is Animal{
+ Animal ? {
   return true
  }
 }
 
 ;index
 Map{
- ?(Key: String)->(value: String){
+ ? Key -> value {
  }
 
- ?Key(i: U32)->(value: String){
+ ?Key(i)-> value {
  }
 
- ?Value(i: U32)->(value: String){
+ ?Value(i)-> value {
  }
 }
 
 HumanDB{
- ?Persons(strFirstName: String, strLastName: String)->IdSet{
+ ?Persons: strFirstName, strLastName -> IdSet {
  }
 }

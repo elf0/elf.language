@@ -2,121 +2,120 @@ version: 0
 
 //License: Public Domain
 //Author: elf
-//EMail: elf198012@gmail.com
+//EMail: elf@iamelf.com
 
 import{
- elf.List
- elf.Thread
- elf.Thread.Condition
+  elf.List
+  elf.Thread
+  elf.Thread.Condition
 }
 
 root: elf.WorkerThread
 
-TaskEntry: (task: Task)->Bool;
-TaskFinalize: (task: Task);
+TaskEntry: (task: Task)->Bool
+TaskFinalize: (task: Task)
 
 Task{
- node: DoubleNode;
- Entry: TaskEntry;
- Finalize: TaskFinalize;
+  node: DoubleNode
+  Entry: TaskEntry
+  Finalize: TaskFinalize
 }
 
-Task.Initialize(TaskEntry Entry, TaskFinalize Finalize){
- .Entry = Entry;
- .Finalize = Finalize;
+$Task.Initialize(TaskEntry Entry, TaskFinalize Finalize){
+  .Entry = Entry
+  .Finalize = Finalize
 }
 
 
-WorkerThread{
- thread: Thread;
- lock: ThreadLock;
- condition: ThreadCondition;
- runnings: List;
- pendings: List;
-}
+WorkerThread:
+  thread: Thread
+  lock: ThreadLock
+  condition: ThreadCondition
+  runnings: List
+  pendings: List
 
-.Initialize(){
- .thread.Initialize((ThreadEntry)WorkerThread_Entry);
- .lock.Initialize();
- .condition.Initialize();
- .runnings.Initialize();
- .pendings.Initialize();
-}
+$Initialize
+  .thread.Initialize((ThreadEntry)WorkerThread_Entry)
+  .lock.Initialize()
+  .condition.Initialize()
+  .runnings.Initialize()
+  .pendings.Initialize()
 
-.Finalize(){
- .condition.Finalize();
- .lock.Finalize();
-}
+$Finalize
+  .condition.Finalize()
+  .lock.Finalize()
 
-.Run()->Bool{
- return .thread.Run();
-}
+$Lock:
+  .lock.$Lock
 
-.Post(task: Task){
- .lock.Lock();
- .pendings.Push((DoubleNode)task);
- .lock.Unlock();
+$Unlock:
+  .lock.$Unlock
 
- .condition.Signal();
-}
+$Notify:
+  .condition.Signal()
+
+$Wait:
+  .condition.Wait(.lock)
+
+$Run->Bool
+   return .thread.Run()
+
+$Post: task
+  Lock()
+  .pendings.Push((DoubleNode)task)
+  Unlock()
+
+  Notify()
 
 //Do not post Empty task list
-.PostTasks(runnings: List){
- .lock.Lock();
- runnings.MoveTo(.pendings);
- .lock.Unlock();
+$Post: runnings
+  $Lock
+  runnings.MoveTo(.pendings)
+  $Unlock
+  $Notify
 
- .condition.Signal();
+$has Tasks(runnings: List)->Bool
+  return runnings.NotEmpty()
 }
 
-has Tasks(runnings: List)->Bool{
- return runnings.NotEmpty();
-}
+$NoTasks: runnings -> Bool
+  return runnings.Empty()
 
-NoTasks(runnings: List)->Bool{
- return runnings.Empty();
-}
+$Move: pendings, runnings
+  pendings.MoveTo(pTasks)
 
-MoveTasks(pendings: List, runnings: List){
- pendings.MoveTo(pTasks);
-}
+$WaitTasks:
+   runnings: .runnings
+   pendings: .pendings
 
-.WaitTasks(){
-  runnings: .runnings;
-  pendings: .pendings;
+   $Lock
 
-  $Lock .lock;
+   if .pendings has Tasks,
+     $Move .pendings to .runnings
+   else if .runnings no Tasks,
+     $Wait
+     $Move .pendings to .runnings
 
-  if .pendings has Tasks,
-   MoveTasks(.pendings, .runnings);
-  else if .runnings no Tasks, {
-   .condition.Wait(.lock);
-   MoveTasks(.pendings, .runnings);
+   $Unlock
+
+$RunTasks:
+  entry: DoubleNode(.runnings)
+  node: DoubleNode = entry.next
+  task: Task
+  while(node != entry){
+   task = (Task)node
+   if(task.Entry(task)){
+    .runnings.Remove(pNode)
+    node = node.next
+    task.Finalize(task)
+   }
+   else
+    node = node.next
   }
 
-  $Unlock .lock;
-}
-
-.RunTasks(){
- entry: DoubleNode(.runnings);
- node: DoubleNode = entry.next;
- task: Task;
- while(node != entry){
-  task = (Task)node;
-  if(task.Entry(task)){
-   .runnings.Remove(pNode);
-   node = node.next;
-   task.Finalize(task);
+$Entry:->void *
+  while(true){
+  .WaitTasks()
+  .RunTasks()
   }
-  else
-   node = node.next;
- }
-}
-
-.Entry()->void *{
- while(true){
-  .WaitTasks();
-  .RunTasks();
- }
- return null;
-}
+  return null

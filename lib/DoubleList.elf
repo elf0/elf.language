@@ -1,7 +1,7 @@
 version: 0
 //License: Public Domain
 //Author: elf
-//EMail: elf198012@gmail.com
+//EMail: elf@iamelf.com
 
 DoubleList: List
 
@@ -11,79 +11,83 @@ import{
 }
 
 List{
-$Reset = {
+$Reset:
   .entry.Reset()
-}
 
-$Initialize = {
-  .Reset()
-}
+$Initialize:
+  Reset()
 
-?is Empty = {
+$Empty:
   return "Is .entry Alone?"
-}
 
-Empty: is not{
+
+$Empty: not
   return .entry is not Alone
-}
 
-Front: get DoubleNode{
- return entry.Next
-}
+$Front:
+  return entry.Next
 
-Back: get DoubleNode{
- return entry.Prev
-}
+$Back:
+  return entry.Prev
 
-$Insert = (node: = DoubleNode, where: = DoubleNode){
+
+$Insert: node, where
   node.Link(where.Prev, where)
-}
 
-$InsertAfter = (node: = DoubleNode, where: = DoubleNode){
+
+$InsertAfter: node, where
   node.Link(where, where.Next)
-}
 
-$Remove = (node: = DoubleNode){
+
+$Remove: node
   node.Unlink()
-}
+
 
 //push back
-$Push = (node: = DoubleNode){
+$Push: node
   node.Link(entry.Prev, entry)
-}
+
 
 //pop front
-$Pop = ->(node: DoubleNode){
+$Pop: -> node
   node = entry.Next
   node.Unlink()
-}
+  $Unlink node
 
-$.PushFront = (node: = DoubleNode){
+
+$PushFront: node
   node.Link(entry, entry.Next)
-}
+  $Link node entry entry.Next
 
-$.PopBack = ->(node: DoubleNode){
+
+$PopBack: -> node
   node = entry.Prev
   node.Unlink()
-}
+  $Unlink node
 
-$.MoveNodeToFront = (node: = DoubleNode){
-  .Remove(node: DoubleNode)
-  .PushFront(node: DoubleNode)
-}
+
+$MoveNodeToFront: node
+  Remove(node)
+  PushFront(node)
+
+  $Remove node
+  $PushFront node
+
 
 //move to back
-$.MoveTo = (target: = This){
+$MoveTo: target
   .entry.MoveBuddiesTo(target.entry)
-}
+  $.entry.MoveBuddiesTo target.entry
 
-$.MoveToFront = (target: = This){
+
+$MoveToFront: target
   .entry.MoveBuddiesToFront(target.entry)
-}
 
-$.Swap = (target: = This){
+
+$Swap: target
   .entry.SwapBuddies(target.entry)
-}
+  $.entry.SwapBuddies target.entry
+
 private:
   entry: DoubleNode
 }List

@@ -10,21 +10,21 @@ import{
 }
 
 interface{
-  Initialize: function
-  Reset: function
-  Empty: is
-  Empty: is not
-  Front: get DoubleNode
-  Back: get DoubleNode
-  Insert: function(node: = DoubleNode, where: = DoubleNode)
-  InsertAfter: function(node: = DoubleNode, where: = DoubleNode)
-  Remove: function(node: = DoubleNode)
-  Push: function(node: = DoubleNode)
-  Pop: function->(node: DoubleNode)
-  PushFront: function(node: = DoubleNode)
-  PopBack: function->(node: DoubleNode)
-  MoveNodeToFront: function(node: = DoubleNode)
-  MoveTo: function(target: = This)
-  MoveToFront: function(target: = This)
-  Swap: function(target: = This)
+  Initialize:
+  Reset:
+  Empty:
+  Empty: not
+  Front: DoubleNode
+  Back: DoubleNode
+  Insert: node: DoubleNode, where: DoubleNode
+  InsertAfter: node: DoubleNode, where: DoubleNode
+  Remove: node: DoubleNode
+  Push: node: DoubleNode
+  Pop: ->node: DoubleNode
+  PushFront: node: DoubleNode
+  PopBack: ->node: DoubleNode
+  MoveNodeToFront: node: DoubleNode
+  MoveTo: target: This
+  MoveToFront: target: This
+  Swap: target: This
 }
