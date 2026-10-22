@@ -1,0 +1,78 @@
+// License: Public Domain
+// Author: elf0
+
+
+// Explicit C-exported functions are retained even when unused by main.
+publicSquare: c(value: I32 -> result: I32) {
+    result = value * value
+}
+
+increment: f(value: I32 -> result: I32) {
+    result = value + 1
+}
+
+addWide: f(left: U128, right: U128 -> result: U128) {
+    result = left + right
+}
+
+scale: f(value: F64 -> result: F64) {
+    result = value * 1.5
+}
+
+divide: f({dividend, divisor}: I64 -> {quotient, remainder}: I64) {
+    quotient = dividend / divisor
+    remainder = dividend - quotient * divisor
+}
+
+classify: c(value: I64 -> result: I64) {
+    NEG: if value < 0 {
+        return -1
+    }NEG
+    else if value == 0 {
+        return 0
+    }
+    POS: else {
+        return 1
+    }POS
+}
+
+main: c(argc: I32, argv: C*[] -> status: I32) {
+    smallUnsigned: U8 = 250
+    a: 1
+    b: +1
+    c: 1.0
+    d: F32 = c
+    byteCharacter: C = 65
+    unsigned32: U32 = 4000000000
+    unsigned64: U64 = 9000000000
+    signed32: I32 = 100
+    signed64: I64 = -9000000000
+    singlePrecision: F32 = 3.25
+    doublePrecision: F64 = 2.5
+    remainder: I64 {}
+    enabled: B {}
+    enabled = 2 // any nonzero value becomes true (1)
+
+    signed32 = increment(signed32)
+    doublePrecision = scale(doublePrecision)
+    quotient: I64 = divide(17, 5 -> remainder)
+    classification: I64 = classify(-1)
+
+    print(a)
+    print(b)
+    print(c)
+    print(d)
+    print(smallUnsigned)
+    print(byteCharacter)
+    print(unsigned32)
+    print(unsigned64)
+    print(signed32)
+    print(signed64)
+    print(singlePrecision)
+    print(doublePrecision)
+    print(quotient)
+    print(remainder)
+    print(classification)
+    print(enabled)
+    status = 0
+}

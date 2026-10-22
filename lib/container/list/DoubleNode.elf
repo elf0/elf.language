@@ -5,60 +5,55 @@ elf: 0
   prev: #
 }
 
-$Next: #{
- return .next
-}
+Next: node
+  node = next
 
-$set Next(value: #){
- .next = value
-}
+Next[node]
+  next = node
 
-$Prev: #{
- return .prev
-}
+Prev: node
+  node = prev
 
-$LinkPrev(prev: #){
-  .prev: prev
-  prev.next: .
-}
+Prev[node]
+  prev = node
 
-$LinkNext(next: #){
-  .next: next
-  next.prev: .
-}
+LinkPrev[prev]
+  .prev = prev
+  prev.next = .
 
-$link(prev: #, next: #){
-  .LinkPrev(prev)
-  .LinkNext(next)
-}
+LinkNext[next]
+  .next = next
+  next.prev = .
 
-$unlink{
-  .prev.next: .next
-  .next.prev: .prev
-}
+Link[prev, next]
+  LinkPrev[prev]
+  LinkNext[next]
 
-$reset{
-  .prev: .next: .
-}
+Unlink
+  prev.next = next
+  next.prev = prev
 
-$is alone{
-  return $next == .
-}
+Reset
+  prev = .
+  next = .
 
-$MoveBuddiesTo(target: #){
-  .next.LinkPrev(target.prev)
-  .prev.LinkNext(target)
-  .reset()
-}
+Alone: is
+  return next == .
 
-$MoveBuddiesToFront(target: #){
-  .next.LinkPrev(target)
-  .prev.LinkNext(target.next)
-  .reset()
-}
+MoveBuddiesTo[target]
+  next.LinkPrev[target.prev]
+  prev.LinkNext[target]
 
-$SwapBuddies(pNode: #, target: #){
-  tmp: .
-  .: target
-  target: tmp
-}
+MoveBuddiesToFront[target]
+  next.LinkPrev[target]
+  prev.LinkNext[target.next]
+
+Swap[target]
+  next.prev = target
+  target.next.prev = .
+  Swap[next, target.next]
+
+  prev.next = target
+  target.prev.next = .
+  Swap[prev, target.prev]
+
