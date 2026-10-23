@@ -1,78 +1,247 @@
 // License: Public Domain
 // Author: elf0
+// Runnable ElfLang grammar tour: each GRAMMAR section below documents a
+// supported source form, its punctuation, meaning, and important restrictions.
+// The syntax is ElfLang, not C: function signatures, block terminators, and
+// loop/switch delimiters are intentionally different from C.
+// Run this program normally: it performs no input, network access, file access,
+// sleeps, or unbounded work. Every loop below has a small, fixed upper bound.
+//
+// LEXICAL GRAMMAR — whitespace/newlines separate tokens; `//` begins a
+// line comment and the rest of that line is ignored. Most statements may end
+// with an optional semicolon. Operators include `+ - * /`, unary `+ -`,
+// comparisons, and numeric-variable `++`/`--`. This lexer does not define
+// string literals, character literals, logical operators, or compound assignments.
+// Identifiers for values/functions start lowercase; labels/types start uppercase.
 
+// GRAMMAR 1 — C-exported entry point and typed parameters:
+//   main: $c(argc: I32, argv: C*[] -> status: I32) { ... }$
+// `argc` is a read-only input. `argv` demonstrates pointer-to-array parameter
+// syntax. `status` is the first output and becomes the C `main` return value.
 
-// Explicit C-exported functions are retained even when unused by main.
-publicSquare: c(value: I32 -> result: I32) {
-    result = value * value
-}
-
-increment: f(value: I32 -> result: I32) {
+// GRAMMAR 2 — ordinary function, typed input and output:
+//   addOne: $(value: I32 -> result: I32) { result = value + 1 }$
+// `->` separates input parameters from output parameters. The first output is
+// returned as the function result. The compiler may inline ordinary functions.
+addOne: $(value: I32 -> result: I32) {
     result = value + 1
-}
+}addOne$
 
-addWide: f(left: U128, right: U128 -> result: U128) {
-    result = left + right
-}
+// GRAMMAR 3 — grouped parameters and multiple outputs:
+//   split: $({whole, divisor}: I32 -> {quotient, remainder}: I32) { ... }$
+// Names inside braces share the type following `}:`. Outputs are assigned
+// through their declared names; the first output is the returned value.
+split: $({whole, divisor}: I32 -> {quotient, remainder}: I32) {
+    quotient = whole / divisor
+    remainder = whole - quotient * divisor
+}split$
 
-scale: f(value: F64 -> result: F64) {
-    result = value * 1.5
-}
+// GRAMMAR 4 — input-only function (no arrow/output section).
+showValue: $(value: I32) {
+    print(value)
+}$
 
-divide: f({dividend, divisor}: I64 -> {quotient, remainder}: I64) {
-    quotient = dividend / divisor
-    remainder = dividend - quotient * divisor
-}
+// GRAMMAR 5 — output-only function (arrow followed by outputs).
+zeroValue: $(-> result: I32) {
+    result = 0
+}$
 
-classify: c(value: I64 -> result: I64) {
-    NEG: if value < 0 {
-        return -1
-    }NEG
-    else if value == 0 {
-        return 0
+// GRAMMAR 6 — no-input/no-output function, called as a statement.
+announce: ${
+    print(700)
+}$
+
+main: $c(argc: I32, argv: C*[] -> status: I32) {
+    // GRAMMAR 7 — declarations, type annotations, and initialization.
+    // `name: Type = expression` declares a value with an explicit type.
+    // `name: expression` infers the type from the initializer. Names for
+    // variables/functions begin lowercase; built-in type names begin uppercase.
+    // `name: Type` declares a zero-initialized local; `name: Type = expression`
+    // supplies an explicit initializer. Reading a local before assigning it
+    // therefore yields its default value (numeric zero, or false for B).
+    typed: I32 = 10       // explicit signed 32-bit integer
+    inferred: 20          // inferred integer type (U for an ordinary positive literal)
+    floating: F64 = 2.5   // explicit 64-bit floating-point value
+    flag: B = 1           // B is false at zero and true at nonzero
+    zeroed: I32           // implicit zero initialization; no braces required
+
+    print(100)             // print accepts integer values up to 64 bits and F32/F64
+    print(addOne(typed))   // function call used as an expression
+    print(inferred + 2)    // arithmetic and parentheses are supported
+    print(floating * 2.0)
+    print(flag)
+    print(zeroed)
+
+    // GRAMMAR 8 — expression operators, precedence, and unary signs.
+    // `*` and `/` bind more tightly than `+` and `-`; parentheses override
+    // the normal precedence. Comparisons bind after arithmetic expressions.
+    // Unary `-x` negates a numeric expression; unary `+x` preserves its value
+    // and can make an integer literal infer as a signed integer type.
+    arithmetic: I32 = (typed + 6) / 2 - 1
+    negative: I32 = -arithmetic
+    positive: I32 = +arithmetic
+    print(arithmetic)
+    print(negative)
+    print(positive)
+
+    // GRAMMAR 9 — prefix/postfix increment and decrement (C-style semantics).
+    // `++x` increments first and yields the new value; `x++` yields the old
+    // value, then increments. `--x` decrements first and yields the new value;
+    // `x--` yields the old value, then decrements. The operand must be a
+    // numeric variable (not a literal, call result, or arbitrary expression).
+    tick: I32 = 5
+    prefixUp: I32 = ++tick    // tick=6, prefixUp=6
+    postfixUp: I32 = tick++   // postfixUp=6, then tick=7
+    prefixDown: I32 = --tick  // tick=6, prefixDown=6
+    postfixDown: I32 = tick-- // postfixDown=6, then tick=5
+    print(prefixUp)
+    print(postfixUp)
+    print(prefixDown)
+    print(postfixDown)
+    print(tick)
+
+    // GRAMMAR 10 — multiple outputs at a call site.
+    rem: I32              // starts at zero; split() overwrites it via its output argument
+    quot: I32 = split(17, 5 -> rem)
+    print(quot)
+    print(rem)
+
+    // GRAMMAR 11 — call an input-only function and a no-output function.
+    showValue(31)
+    announce()
+
+    // GRAMMAR 12 — comparisons and if / else-if / else chain.
+    // Comparisons `==`, `!=`, `<`, `<=`, `>`, `>=` produce boolean-like values.
+    // `if condition { ... } else if condition { ... } else { ... }` evaluates
+    // branches in order and executes only the first matching branch. Numeric
+    // conditions are also accepted: zero is false and nonzero is true.
+    if typed < inferred {
+        print(200)
+    } else if typed == inferred {
+        print(201)
+    } else {
+        print(202)
     }
-    POS: else {
-        return 1
-    }POS
-}
 
-main: c(argc: I32, argv: C*[] -> status: I32) {
-    smallUnsigned: U8 = 250
-    a: 1
-    b: +1
-    c: 1.0
-    d: F32 = c
-    byteCharacter: C = 65
-    unsigned32: U32 = 4000000000
-    unsigned64: U64 = 9000000000
-    signed32: I32 = 100
-    signed64: I64 = -9000000000
-    singlePrecision: F32 = 3.25
-    doublePrecision: F64 = 2.5
-    remainder: I64 {}
-    enabled: B {}
-    enabled = 2 // any nonzero value becomes true (1)
+    // GRAMMAR 13 — labeled conditional branches. A label is `NAME:` immediately
+    // before a branch; labels begin uppercase and must match the optional suffix
+    // after that branch's closing brace. Labels can also be `goto` targets.
+    POSITIVE: if typed > 0 {
+        print(210)
+    }POSITIVE
+    NEGATIVE: else {
+        print(211)
+    }NEGATIVE
 
-    signed32 = increment(signed32)
-    doublePrecision = scale(doublePrecision)
-    quotient: I64 = divide(17, 5 -> remainder)
-    classification: I64 = classify(-1)
+    // GRAMMAR 14 — conditional loop: `@ { body } condition @`. The opening
+    // condition is optional; the trailing condition is checked after each body
+    // execution. This example increments counter until the trailing test is false.
+    counter: I32
+    @{ 
+        print(++counter)
+    } counter < 3 @
 
-    print(a)
-    print(b)
-    print(c)
-    print(d)
-    print(smallUnsigned)
-    print(byteCharacter)
-    print(unsigned32)
-    print(unsigned64)
-    print(signed32)
-    print(signed64)
-    print(singlePrecision)
-    print(doublePrecision)
-    print(quotient)
-    print(remainder)
-    print(classification)
-    print(enabled)
+    // GRAMMAR 15 — named loop and labeled break/continue. `NAME: @{ ... }NAME@`
+    // labels the loop. `continue NAME` skips to the next iteration and `break NAME`
+    // exits that loop. A semicolon after a simple statement is optional. The
+    // counter and break condition below make this example terminate deterministically.
+    LOOP: @{
+        counter = counter + 1
+        if counter == 4 {
+            continue LOOP
+        }
+        print(counter)
+        if counter >= 5 {
+            break LOOP
+        }
+    }LOOP@
+
+    // GRAMMAR 16 — inclusive integer range iteration. `@ for name in [ranges] { ... }@`
+    // accepts comma-separated single integers and ascending inclusive ranges.
+    // Both endpoints are included; descending ranges are rejected. This visits
+    // 0, 1, 2, then 4. The iteration variable is an I32 value.
+    @ for item in [0-2, 4] {
+        print(item)
+    }@
+
+    // GRAMMAR 17 — array literal and fixed-size array iteration. `Type[]` is
+    // an array type, and `{element, ...}` is a non-empty array literal. A `for`
+    // array loop currently requires a named local array initialized from a literal;
+    // its elements are visited in order, with the element type preserved.
+    values: I32[] = {6, 8, 10}
+    @ for item in values {
+        print(item)
+    }@
+
+    // GRAMMAR 18 — switch with prelude, default, singleton, and inclusive range.
+    // `# expression { ... }#` starts/ends an unnamed switch.
+    // Statements before the first case run before dispatch; cases share `base`.
+    // `#:` is default, `#value:` matches one integer, and `#a - b, c:` matches
+    // the inclusive range a..b plus singleton c. Cases never fall through.
+    // The switch executes exactly one branch and then continues after `}#`.
+    SWITCH: # argc {
+        base: I32 = 1
+
+        #:
+            print(300 + base)
+
+        #0:
+            print(310 - base)
+
+        #1 - 50, 52:
+            print(320 * base)
+    }SWITCH#
+
+    // GRAMMAR 19 — pointer and array type syntax is demonstrated by `argv`.
+    // `T*` denotes a pointer, `T[]` an array, and `T*[]` an array of pointers.
+    // `C` is the C-character type used for the conventional `char *argv[]`
+    // entry-point parameter. This example does not dereference argv or access
+    // external data. Array indexing/pointer arithmetic are not part of this demo.
+
+    // GRAMMAR 20 — explicit return expression exits the function immediately.
+    // `return expression` terminates the current function. `status` is assigned
+    // as the declared output and then returned; the final `}main$` is the
+    // canonical function terminator with an optional matching function-name label.
+    // Keep the usual output assignment here to make the status path obvious.
     status = 0
-}
+    return status
+}main$
+
+
+// GRAMMAR INDEX / IMPLEMENTATION NOTES
+// ------------------------------------
+// Function: name: $(inputs -> outputs) { body }$
+// C export: name: $c(inputs -> outputs) { body }$; `$` before `c` is required.
+// The input section, arrow/output section, or both may be empty. `name: ${ ... }$`
+// is the shorthand for no inputs and no outputs. Parameter groups such as
+// `{left, right}: I32` give several parameters the same type.
+//
+// Declaration: name: Type = expression; inferred declaration: name: expression;
+// zero initialization: name: Type. Explicit initialization: name: Type = expression.
+// Fixed arrays use Type[] = {e0, e1, ...}; array declarations require an initializer.
+// Assignment: name = expression. There are no `+=`, `-=`, `*=`, or `/=` operators.
+// Calls: function(arg0, arg1 -> output0, output1). The arrow and output arguments
+// are used when a function has output parameters; outputless calls are statements.
+//
+// Expression precedence (highest to lowest): primary/call/parentheses and
+// prefix/postfix ++/--; unary + and -; * and /; + and -; comparisons. The
+// parser currently accepts one comparison level in a single expression.
+//
+// Conditional: if expression { ... } else if expression { ... } else { ... }.
+// Optional uppercase-leading branch labels may be placed before `if`/`else`;
+// if present, the closing-brace suffix must match the label.
+//
+// Conditional loop: @{ body } condition @; a labeled loop may use `NAME: @{ ... }NAME@`.
+// For loop: @ for item in [single, first-last, ...] { ... }@, or `@ for item in array { ... }@`.
+// Loop controls: break [NAME], continue [NAME]. Labels are optional for innermost loop.
+//
+// Switch: NAME: # expression { prelude #case: body #first-last, value: body }NAME#;
+// `#:` is the optional default. Cases are integer literals/ranges and do not fall through.
+//
+// Jump/return: `goto LABEL`, `LABEL:`, and `return expression`. Jump labels use uppercase-leading names.
+// Function, conditional, loop, and switch braces are structural delimiters; their
+// closing suffixes (`}$`, `}NAME$`, `}@`, `}NAME@`, `}#`, `}NAME#`) are not interchangeable.
+//
+// Unsupported by this grammar tour: user-defined aggregate declarations, member
+// access, array indexing, string literals, logical `&&`/`||`, bitwise operators,
+// ternary expressions, compound assignments, and arbitrary lvalue ++/-- operands.
