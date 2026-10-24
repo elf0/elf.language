@@ -7,12 +7,15 @@
 // Run this program normally: it performs no input, network access, file access,
 // sleeps, or unbounded work. Every loop below has a small, fixed upper bound.
 //
-// LEXICAL GRAMMAR — whitespace/newlines separate tokens; `//` begins a
-// line comment and the rest of that line is ignored. Most statements may end
-// with an optional semicolon. Operators include `+ - * /`, unary `+ -`,
-// comparisons, and numeric-variable `++`/`--`. This lexer does not define
-// string literals, character literals, logical operators, or compound assignments.
-// Identifiers for values/functions start lowercase; labels/types start uppercase.
+// LEXICAL GRAMMAR — `//` starts a comment through the end of that line.
+// A line feed ends a statement; a semicolon is accepted as an optional
+// compatibility terminator. Top-level declarations require a blank line between
+// them, and aggregate fields require a blank line before properties/methods.
+// Identifiers for values/functions/fields start lowercase; type names, enum
+// names, property names, and labels start uppercase. Operators shown below are
+// `+ - * /`, unary `+ -`, comparisons, and numeric-variable `++`/`--`. String
+// and character literals, logical operators, and general compound assignments
+// are not supported by this grammar tour (member-method lowering accepts `+=`/`-=`).
 
 // GRAMMAR 1 — C-exported entry point and typed parameters:
 //   main: $c(argc: I32, argv: C*[] -> status: I32) { ... }$
@@ -51,8 +54,108 @@ announce: ${
     print(700)
 }$
 
+// GRAMMAR 7 — struct fields, properties, and member methods.
+// A type starts with an uppercase identifier and ends with the same name after
+// its closing brace. Fields use lowercase names and `field: Type` declarations.
+// Leave a blank line between fields and properties/methods. Struct fields remain
+// public, while a property is an optional getter/setter wrapper around a field.
+SPoint: struct{
+  x: I32
+  y: I32
+
+  X: I32 {
+    get ${
+      return .x
+    }$
+
+    set ${
+      .x = value
+    }$
+  }X
+
+  move: $({dx, dy}: I32) {
+    .x += dx
+    .y += dy
+  }$
+}SPoint
+
+// GRAMMAR 8 — classes have the same field/property/method shape, but fields
+// are private outside the class. Access them externally through properties;
+// direct `cp.x` is intentionally not used because it must be rejected.
+CPoint: class{
+  x: I32
+  y: I32
+
+  X: I32 {
+    get ${
+      return .x
+    }$
+
+    set ${
+      .x = value
+    }$
+  }X
+
+  move: $({dx, dy}: I32) {
+    .x += dx
+    .y += dy
+  }$
+}CPoint
+
+// GRAMMAR 9 — integer-backed enum. Member values default to 0, 1, 2, ...;
+// an explicit value resets the sequence, so blue becomes 5. `U8` is the
+// requested storage type. The trailing `}Color` must match the enum name.
+Color: enum U8 {
+  red
+  green = 4
+  blue
+}Color
+
+// GRAMMAR 10 — enum storage inference. Without a type after `enum`, the
+// compiler chooses the smallest supported unsigned integer type that fits.
+Direction: enum {
+  north
+  east
+  south
+  west
+}Direction
+
+// GRAMMAR 11 — union views share one storage word. Group names (`u8`, `u16`,
+// `u32`) are views, not fields. Fields pack upward from bit zero in declaration
+// order; u8.f7 therefore occupies bits 56..63 of this 64-bit union. The declared
+// storage size must equal the largest view size.
+Value: union 64 {
+  u8{
+    f0: U8
+    f1: U8
+    f2: U8
+    f3: U8
+    f4: U8
+    f5: U8
+    f6: U8
+    f7: U8
+  }u8
+  u16{
+    f0: U16
+    f1: U16
+    f2: U16
+    f3: U16
+  }u16
+  u32{
+    f0: U32
+    f1: U32
+  }u32
+  u64: U64
+}Value
+
+// GRAMMAR 12 — inferred union storage. Here the single U8 member determines
+// the storage size, so the `union` keyword has no numeric size suffix.
+SmallValue: union {
+  byte: U8
+}SmallValue
+
 main: $c(argc: I32, argv: C*[] -> status: I32) {
-    // GRAMMAR 7 — declarations, type annotations, and initialization.
+    // GRAMMAR 13 — declarations, type annotations, and initialization.
     // `name: Type = expression` declares a value with an explicit type.
     // `name: expression` infers the type from the initializer. Names for
     // variables/functions begin lowercase; built-in type names begin uppercase.
@@ -65,14 +168,51 @@ main: $c(argc: I32, argv: C*[] -> status: I32) {
     flag: B = 1           // B is false at zero and true at nonzero
     zeroed: I32           // implicit zero initialization; no braces required
 
-    print(100)             // print accepts integer values up to 64 bits and F32/F64
+    // Values for the aggregate, enum, and union examples. These are scalarized
+    // by the current compiler implementation; the source-level grammar remains
+    // ordinary typed declarations and member expressions.
+    sp: SPoint
+    cp: CPoint
+    color: Color
+    direction: Direction
+    v: Value
+    small: SmallValue
+
+    print(100);            // print accepts integer values up to 64 bits and F32/F64; `;` is optional
     print(addOne(typed))   // function call used as an expression
     print(inferred + 2)    // arithmetic and parentheses are supported
     print(floating * 2.0)
     print(flag)
     print(zeroed)
 
-    // GRAMMAR 8 — expression operators, precedence, and unary signs.
+    // Exercise struct/class methods and properties. The move method receives
+    // grouped parameters; `.x`/`.y` refer to the current receiver. Struct fields
+    // are public, so `sp.x` is legal. Class fields are private, so use `cp.X`.
+    sp.move(1, -1)
+    cp.move(1, -1)
+    print(sp.x)            // 1: public struct field
+    print(sp.X)            // 1: struct getter property
+    cp.X = 10              // class setter property writes private cp.x
+    print(cp.X)            // 10: class getter property
+
+    // Enum names are qualified constants. Explicit green=4 means blue=5;
+    // Direction demonstrates the automatically selected storage type.
+    color = Color.green
+    direction = Direction.west
+    print(color)           // 4
+    print(Color.blue)      // 5
+    print(direction)       // 3
+
+    // Union view access overlays the same storage. Writing byte 7 must not
+    // change byte 0; reading u64 shows the full unsigned 64-bit bit pattern.
+    v.u8.f7 = 255
+    print(v.u8.f0)         // 0
+    print(v.u8.f7)         // 255
+    print(v.u64)           // 18374686479671623680
+    small.byte = 9
+    print(small.byte)      // 9: storage size inferred from U8
+
+    // GRAMMAR 14 — expression operators, precedence, and unary signs.
     // `*` and `/` bind more tightly than `+` and `-`; parentheses override
     // the normal precedence. Comparisons bind after arithmetic expressions.
     // Unary `-x` negates a numeric expression; unary `+x` preserves its value
@@ -84,7 +224,7 @@ main: $c(argc: I32, argv: C*[] -> status: I32) {
     print(negative)
     print(positive)
 
-    // GRAMMAR 9 — prefix/postfix increment and decrement (C-style semantics).
+    // GRAMMAR 15 — prefix/postfix increment and decrement (C-style semantics).
     // `++x` increments first and yields the new value; `x++` yields the old
     // value, then increments. `--x` decrements first and yields the new value;
     // `x--` yields the old value, then decrements. The operand must be a
@@ -100,17 +240,17 @@ main: $c(argc: I32, argv: C*[] -> status: I32) {
     print(postfixDown)
     print(tick)
 
-    // GRAMMAR 10 — multiple outputs at a call site.
+    // GRAMMAR 16 — multiple outputs at a call site.
     rem: I32              // starts at zero; split() overwrites it via its output argument
     quot: I32 = split(17, 5 -> rem)
     print(quot)
     print(rem)
 
-    // GRAMMAR 11 — call an input-only function and a no-output function.
+    // GRAMMAR 17 — call an input-only function and a no-output function.
     showValue(31)
     announce()
 
-    // GRAMMAR 12 — comparisons and if / else-if / else chain.
+    // GRAMMAR 18 — comparisons and if / else-if / else chain.
     // Comparisons `==`, `!=`, `<`, `<=`, `>`, `>=` produce boolean-like values.
     // `if condition { ... } else if condition { ... } else { ... }` evaluates
     // branches in order and executes only the first matching branch. Numeric
@@ -123,7 +263,7 @@ main: $c(argc: I32, argv: C*[] -> status: I32) {
         print(202)
     }
 
-    // GRAMMAR 13 — labeled conditional branches. A label is `NAME:` immediately
+    // GRAMMAR 19 — labeled conditional branches. A label is `NAME:` immediately
     // before a branch; labels begin uppercase and must match the optional suffix
     // after that branch's closing brace. Labels can also be `goto` targets.
     POSITIVE: if typed > 0 {
@@ -133,15 +273,23 @@ main: $c(argc: I32, argv: C*[] -> status: I32) {
         print(211)
     }NEGATIVE
 
-    // GRAMMAR 14 — conditional loop: `@ { body } condition @`. The opening
+    // GRAMMAR 19b — goto jumps to an uppercase label. The jump deliberately
+    // skips the print(999) statement; it cannot form a loop or block execution.
+    goto AFTER_JUMP
+    print(999)
+    AFTER_JUMP:
+    print(212)
+
+    // GRAMMAR 20 — conditional loop: `@ { body } condition @`. The opening
     // condition is optional; the trailing condition is checked after each body
     // execution. This example increments counter until the trailing test is false.
-    counter: I32
+    counter: I32 = 0
     @{ 
-        print(++counter)
+        counter = counter + 1
+        print(counter)
     } counter < 3 @
 
-    // GRAMMAR 15 — named loop and labeled break/continue. `NAME: @{ ... }NAME@`
+    // GRAMMAR 21 — named loop and labeled break/continue. `NAME: @{ ... }NAME@`
     // labels the loop. `continue NAME` skips to the next iteration and `break NAME`
     // exits that loop. A semicolon after a simple statement is optional. The
     // counter and break condition below make this example terminate deterministically.
@@ -156,7 +304,7 @@ main: $c(argc: I32, argv: C*[] -> status: I32) {
         }
     }LOOP@
 
-    // GRAMMAR 16 — inclusive integer range iteration. `@ for name in [ranges] { ... }@`
+    // GRAMMAR 22 — inclusive integer range iteration. `@ for name in [ranges] { ... }@`
     // accepts comma-separated single integers and ascending inclusive ranges.
     // Both endpoints are included; descending ranges are rejected. This visits
     // 0, 1, 2, then 4. The iteration variable is an I32 value.
@@ -164,7 +312,7 @@ main: $c(argc: I32, argv: C*[] -> status: I32) {
         print(item)
     }@
 
-    // GRAMMAR 17 — array literal and fixed-size array iteration. `Type[]` is
+    // GRAMMAR 23 — array literal and fixed-size array iteration. `Type[]` is
     // an array type, and `{element, ...}` is a non-empty array literal. A `for`
     // array loop currently requires a named local array initialized from a literal;
     // its elements are visited in order, with the element type preserved.
@@ -173,7 +321,7 @@ main: $c(argc: I32, argv: C*[] -> status: I32) {
         print(item)
     }@
 
-    // GRAMMAR 18 — switch with prelude, default, singleton, and inclusive range.
+    // GRAMMAR 24 — switch with prelude, default, singleton, and inclusive range.
     // `# expression { ... }#` starts/ends an unnamed switch.
     // Statements before the first case run before dispatch; cases share `base`.
     // `#:` is default, `#value:` matches one integer, and `#a - b, c:` matches
@@ -192,13 +340,13 @@ main: $c(argc: I32, argv: C*[] -> status: I32) {
             print(320 * base)
     }SWITCH#
 
-    // GRAMMAR 19 — pointer and array type syntax is demonstrated by `argv`.
+    // GRAMMAR 25 — pointer and array type syntax is demonstrated by `argv`.
     // `T*` denotes a pointer, `T[]` an array, and `T*[]` an array of pointers.
     // `C` is the C-character type used for the conventional `char *argv[]`
     // entry-point parameter. This example does not dereference argv or access
     // external data. Array indexing/pointer arithmetic are not part of this demo.
 
-    // GRAMMAR 20 — explicit return expression exits the function immediately.
+    // GRAMMAR 26 — explicit return expression exits the function immediately.
     // `return expression` terminates the current function. `status` is assigned
     // as the declared output and then returned; the final `}main$` is the
     // canonical function terminator with an optional matching function-name label.
@@ -242,6 +390,16 @@ main: $c(argc: I32, argv: C*[] -> status: I32) {
 // Function, conditional, loop, and switch braces are structural delimiters; their
 // closing suffixes (`}$`, `}NAME$`, `}@`, `}NAME@`, `}#`, `}NAME#`) are not interchangeable.
 //
-// Unsupported by this grammar tour: user-defined aggregate declarations, member
-// access, array indexing, string literals, logical `&&`/`||`, bitwise operators,
-// ternary expressions, compound assignments, and arbitrary lvalue ++/-- operands.
+// Aggregate declarations: `Name: struct{ fields ... }Name` or
+// `Name: class{ fields ... }Name`. Struct fields are public; class fields are
+// private. A property is `Name: Type { get ${ return .field }$ set ${ .field = value }$ }Name`.
+// A member method is `name: $({args}: Type) { ... }$`; receiver fields use `.field`.
+// Enum: `Name: enum [StorageType] { member [= integer] ... }Name`.
+// Union: `Name: union [bits] { group{ field: U8 ... }group; field: U64 }Name`.
+// Union group names are views; all views overlap one storage word. If `bits` is
+// omitted, the largest view determines storage. Current union support is local,
+// unsigned-integer-only, and limited to 64 bits.
+// Still outside this tour's supported grammar: string/character literals,
+// logical `&&`/`||`, bitwise operators, ternary expressions, array indexing,
+// compound assignments outside lowered member-method bodies, and arbitrary
+// lvalue ++/-- operands.
